@@ -1,7 +1,7 @@
 const welcome = () => {
     return (
         <div>
-            welcome <button className="btn btn-accent">Test</button>
+            welcome <button className="btn btn-neutral">Test</button>
         </div>
     );
 };
