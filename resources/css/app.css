@@ -37,7 +37,7 @@
     --noise: 0;
 }
 
-body {
+html {
     background-image: url('assets/BACKGROUND_IMAGE.webp');
     background-size: cover;
     background-position: center;
