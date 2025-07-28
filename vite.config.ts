@@ -4,6 +4,9 @@ import laravel from 'laravel-vite-plugin';
 import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 
+// Access env variable directly
+const networkHost = process.env.VITE_NETWORK_URL || 'localhost'; // fallback if not defined
+
 export default defineConfig({
     plugins: [
         laravel({
@@ -20,6 +23,13 @@ export default defineConfig({
     resolve: {
         alias: {
             'ziggy-js': resolve(__dirname, 'vendor/tightenco/ziggy'),
+        },
+    },
+    server: {
+        host: true,
+        port: 5173,
+        hmr: {
+            host: networkHost,
         },
     },
 });
