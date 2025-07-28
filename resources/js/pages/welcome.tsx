@@ -108,7 +108,7 @@ const welcome = () => {
                     )}
 
                     <button className="btn mt-8 btn-neutral" disabled={isDisabled}>
-                        Add
+                        Add Event
                     </button>
                 </div>
             </div>
