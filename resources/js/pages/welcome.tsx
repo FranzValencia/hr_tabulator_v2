@@ -1,10 +1,15 @@
-import { Criterion } from '@/types/types';
+import { useToast } from '@/context/ToastContext';
+import { Criterion, Event } from '@/types/types';
+import { router } from '@inertiajs/react';
 import { X } from 'lucide-react';
 import { useState } from 'react';
 
-const welcome = () => {
+const welcome = ({ events }: { events: Event[] }) => {
+    const [eventName, setEventName] = useState('');
     const [criteria, setCriteria] = useState<Criterion[]>([]);
     const [criterion, setCriterion] = useState<Criterion>({ name: '', weight: 0, id: 0 });
+
+    const { showToast } = useToast();
 
     const totalWeight = criteria.reduce((sum, c) => sum + c.weight, 0);
     const isDisabled = totalWeight !== 100;
@@ -27,6 +32,19 @@ const welcome = () => {
         setCriteria((prev) => prev.filter((item) => item.id !== id));
     };
 
+    const handleEventSubmit = async () => {
+        await router.post(
+            route('event.create', { event_name: eventName, criteria }),
+            {},
+            {
+                onSuccess: () => {
+                    (setCriteria([]), setCriterion({ name: '', weight: 0, id: 0 }), setEventName(''));
+                    showToast('Event Created Successfully', 'success');
+                },
+            },
+        );
+    };
+
     return (
         <div className="flex h-screen justify-evenly bg-gradient-to-br from-base-100 to-base-300 p-8">
             <div className="card h-fit w-full max-w-xl bg-base-100 shadow-xl">
@@ -34,7 +52,7 @@ const welcome = () => {
                     <div className="text-lg font-bold">New Event</div>
                     <fieldset className="fieldset">
                         <legend className="fieldset-legend">Event Name</legend>
-                        <input type="text" className="input" />
+                        <input type="text" className="input" value={eventName} onChange={(e) => setEventName(e.target.value)} />
                     </fieldset>
 
                     <div className="text-lg font-bold">Criteria</div>
@@ -94,7 +112,7 @@ const welcome = () => {
                                     {criteria.map((criterion, index) => (
                                         <tr key={index}>
                                             <td>{criterion.name}</td>
-                                            <td>{criterion.weight}</td>
+                                            <td>{criterion.weight}% </td>
                                             <td className="text-end">
                                                 <button className="btn btn-square btn-xs btn-error" onClick={() => onRemoveCriterion(criterion.id)}>
                                                     <X />
@@ -107,7 +125,7 @@ const welcome = () => {
                         </div>
                     )}
 
-                    <button className="btn mt-8 btn-neutral" disabled={isDisabled}>
+                    <button className="btn mt-8 btn-neutral" disabled={isDisabled || !eventName} onClick={() => handleEventSubmit()}>
                         Add Event
                     </button>
                 </div>
@@ -118,27 +136,15 @@ const welcome = () => {
                     <div className="overflow-x-auto border border-base-content/5 bg-base-100">
                         <table className="table table-zebra">
                             <tbody>
-                                <tr>
-                                    <td>Quality Control Specialist</td>
-                                    <td className="text-end">
-                                        <div className="flex" />
-                                        <button className="btn btn-sm btn-neutral">View</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Quality Control Specialist</td>
-                                    <td className="text-end">
-                                        <div className="flex" />
-                                        <button className="btn btn-sm btn-neutral">View</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Quality Control Specialist</td>
-                                    <td className="text-end">
-                                        <div className="flex" />
-                                        <button className="btn btn-sm btn-neutral">View</button>
-                                    </td>
-                                </tr>
+                                {events.map((event, index) => (
+                                    <tr>
+                                        <td>{event.name}</td>
+                                        <td className="text-end">
+                                            <div className="flex" />
+                                            <button className="btn btn-sm btn-neutral">View</button>
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>

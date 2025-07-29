@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('username')->unique();
             $table->string('password');
             $table->enum('role',['administrator','judge'])->default('judge');
+            $table->enum('status',['active','in-active'])->default('active');
             $table->timestamps();
         });
 
