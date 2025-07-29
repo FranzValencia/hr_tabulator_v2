@@ -37,7 +37,11 @@
     --noise: 0;
 }
 
-/* html {
+body {
+    @apply bg-gradient-to-br from-gray-100 to-base-300;
+}
+
+/* body {
     background-image: url('assets/BACKGROUND_IMAGE.webp');
     background-size: cover;
     background-position: center;

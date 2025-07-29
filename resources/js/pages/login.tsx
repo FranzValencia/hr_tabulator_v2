@@ -28,7 +28,7 @@ const login = () => {
     };
 
     return (
-        <div className="flex h-screen flex-col items-center">
+        <div className="flex h-screen flex-col items-center" style={{ backgroundImage: `url('/assets/BACKGROUND_IMAGE.webp')` }}>
             <img src="/assets/125th_LOGO.webp" alt="logo" className="mt-24 max-w-40" />
             <form onSubmit={(e) => handleSubmit(e)} className="fieldset w-xs rounded-box border border-base-300 bg-base-200 p-4">
                 <legend className="fieldset-legend">Login</legend>

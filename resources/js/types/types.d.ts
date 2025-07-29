@@ -8,4 +8,5 @@ export interface Event {
     id: number;
     name: string;
     status: 'active' | 'in-active';
+    criteria?: Criterion[];
 }

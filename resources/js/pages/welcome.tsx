@@ -1,6 +1,6 @@
 import { useToast } from '@/context/ToastContext';
 import { Criterion, Event } from '@/types/types';
-import { router } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import { X } from 'lucide-react';
 import { useState } from 'react';
 
@@ -46,7 +46,7 @@ const welcome = ({ events }: { events: Event[] }) => {
     };
 
     return (
-        <div className="flex h-screen justify-evenly bg-gradient-to-br from-base-100 to-base-300 p-8">
+        <div className="flex h-screen justify-evenly p-8">
             <div className="card h-fit w-full max-w-xl bg-base-100 shadow-xl">
                 <div className="card-body">
                     <div className="text-lg font-bold">New Event</div>
@@ -137,11 +137,13 @@ const welcome = ({ events }: { events: Event[] }) => {
                         <table className="table table-zebra">
                             <tbody>
                                 {events.map((event, index) => (
-                                    <tr>
+                                    <tr key={index}>
                                         <td>{event.name}</td>
                                         <td className="text-end">
                                             <div className="flex" />
-                                            <button className="btn btn-sm btn-neutral">View</button>
+                                            <Link href={route('admin', event.id)} className="btn btn-sm btn-neutral">
+                                                View
+                                            </Link>
                                         </td>
                                     </tr>
                                 ))}

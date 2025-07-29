@@ -21,6 +21,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ]);
     })->name('home');
 
+    Route::get('/admin/{id}', function ($id) {
+        $event = Event::with('criteria')->findOrFail($id);
+
+        return Inertia::render('admin', [
+            'event' => $event,
+        ]);
+    })->name('admin');
+
     Route::post('/event/create', [EventController::class, 'event_create'])->name('event.create');
 });
 

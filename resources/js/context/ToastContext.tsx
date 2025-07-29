@@ -1,3 +1,4 @@
+import { X } from 'lucide-react';
 import React, { createContext, ReactNode, useCallback, useContext, useState } from 'react';
 
 type ToastType = 'success' | 'error' | 'info' | 'warning';
@@ -51,7 +52,7 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) =
                     >
                         <span>{toast.message}</span>
                         <button onClick={() => removeToast(toast.id)} className="ml-4 text-lg leading-none font-bold hover:text-gray-700">
-                            ×
+                            <X size={14} />
                         </button>
                     </div>
                 ))}
