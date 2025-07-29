@@ -21,4 +21,9 @@ class Event extends Model
         return $this->hasMany(Criterion::class);
     }
 
+     public function judges()
+    {
+        return $this->hasMany(User::class);
+    }
+
 }

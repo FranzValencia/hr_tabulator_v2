@@ -9,4 +9,5 @@ export interface Event {
     name: string;
     status: 'active' | 'in-active';
     criteria?: Criterion[];
+    judges?: User[];
 }

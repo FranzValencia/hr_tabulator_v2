@@ -4,6 +4,7 @@ export interface Auth {
 
 export interface User {
     id: number;
+    event_id: number | null;
     name: string;
     username: string;
     role: 'administrator' | 'judge';

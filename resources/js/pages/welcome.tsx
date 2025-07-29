@@ -136,6 +136,9 @@ const welcome = ({ events }: { events: Event[] }) => {
                     <div className="overflow-x-auto border border-base-content/5 bg-base-100">
                         <table className="table table-zebra">
                             <tbody>
+                                {events.length === 0 && (
+                                    <div className="w-full border-2 border-base-300 bg-base-200 py-2 text-center"> No record found </div>
+                                )}
                                 {events.map((event, index) => (
                                     <tr key={index}>
                                         <td>{event.name}</td>

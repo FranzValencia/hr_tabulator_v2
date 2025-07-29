@@ -11,10 +11,8 @@ const admin = ({ event }: { event: Event }) => {
                                 {/* head */}
                                 <thead>
                                     <tr>
-                                        <th></th>
                                         <th>Name</th>
-                                        <th>Job</th>
-                                        <th>Favorite Color</th>
+                                        <th>Account</th>
                                     </tr>
                                 </thead>
                                 <tbody>
