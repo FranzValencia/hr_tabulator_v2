@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Event\EventController;
 use App\Models\Event;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -22,9 +23,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('home');
 
     Route::get('/admin/{id}', function ($id) {
+        $judges = User::where('status','active')->get();
         $event = Event::with('criteria')->findOrFail($id);
 
         return Inertia::render('admin', [
+            'judges' => $judges,
             'event' => $event,
         ]);
     })->name('admin');

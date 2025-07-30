@@ -23,7 +23,7 @@ class Event extends Model
 
      public function judges()
     {
-        return $this->hasMany(User::class);
+        return $this->belongsToMany(User::class);
     }
 
 }

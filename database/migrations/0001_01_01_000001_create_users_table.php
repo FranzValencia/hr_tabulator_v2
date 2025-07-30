@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('event_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('name');
             $table->string('username')->unique();
             $table->string('password');
+            $table->string('plain_password');
             $table->enum('role',['administrator','judge'])->default('judge');
             $table->enum('status',['active','in-active'])->default('active');
             $table->timestamps();
