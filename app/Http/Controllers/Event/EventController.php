@@ -54,11 +54,14 @@ class EventController extends Controller
                 'user_id' => 'required|integer',
             ]);
 
-            $event = EventUser::where('user_id',$validated['user_id'])->where('event_id',$validated['event_id'])->where('status','active')->first();
+            $event = EventUser::where('user_id', $validated['user_id'])
+                ->where('event_id', $validated['event_id'])
+                ->where('status', 'active')
+                ->first();
 
-            $event->update([
-                'status' => 'in-active',
-            ]);
+            if ($event) {
+                $event->delete();
+            }
         } catch (ValidationException $e) {
             return back()->withErrors($e->validator)->withInput();
         } catch (Exception $e) {

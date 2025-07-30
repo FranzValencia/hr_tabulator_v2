@@ -5,7 +5,7 @@ import CreateJudgeModal from './CreateJudgeModal';
 
 const JudgesComponent = ({ event, judges }: { event: Event; judges: User[] }) => {
     const handleJudgeRemoval = async (user_id: number, event_id: number) => {
-        await router.patch(route('event.remove.judge', { event_id, user_id }));
+        await router.delete(route('event.remove.judge', { event_id, user_id }));
     };
 
     return (
@@ -101,9 +101,39 @@ const JudgesComponent = ({ event, judges }: { event: Event; judges: User[] }) =>
                                             <td>{judge.username}</td>
                                             <td>{judge.plain_password}</td>
                                             <td>
-                                                <button onClick={() => handleJudgeRemoval(judge.id, event.id)} className="btn btn-xs btn-error">
+                                                <button
+                                                    className="btn btn-xs btn-error"
+                                                    onClick={() => {
+                                                        const modal = document.getElementById('deleteJudgeModal') as HTMLDialogElement | null;
+                                                        if (modal) {
+                                                            modal.showModal();
+                                                        }
+                                                    }}
+                                                >
                                                     Remove
                                                 </button>
+                                                <dialog id="deleteJudgeModal" className="modal">
+                                                    <div className="modal-box max-w-sm">
+                                                        <h3 className="text-lg font-bold">Remove Judge </h3>
+
+                                                        <h1 className="mt-2 text-sm">
+                                                            Are you sure you want to remove <span className="font-bold">{judge.name}</span> as Judge
+                                                            for {event.name}?
+                                                        </h1>
+                                                        <div className="modal-action">
+                                                            <form method="dialog">
+                                                                {/* if there is a button in form, it will close the modal */}
+                                                                <button className="btn">Cancel</button>
+                                                                <button
+                                                                    className="btn btn-error"
+                                                                    onClick={() => handleJudgeRemoval(judge.id, event.id)}
+                                                                >
+                                                                    Remove
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </dialog>
                                             </td>
                                         </tr>
                                     ))}

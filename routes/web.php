@@ -40,7 +40,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('/event/create', [EventController::class, 'event_create'])->name('event.create');
     Route::post('/event/add-judge', [EventController::class, 'add_judge'])->name('event.add.judge');
-    Route::patch('/event/remove-judge', [EventController::class, 'remove_judge'])->name('event.remove.judge');
+    Route::delete('/event/remove-judge', [EventController::class, 'remove_judge'])->name('event.remove.judge');
     Route::post('/event/create-judge', [EventController::class, 'create_judge'])->name('event.create.judge');
 });
 
