@@ -4,12 +4,16 @@ import { router } from '@inertiajs/react';
 import CreateJudgeModal from './CreateJudgeModal';
 
 const JudgesComponent = ({ event, judges }: { event: Event; judges: User[] }) => {
+    const handleJudgeRemoval = async (user_id: number, event_id: number) => {
+        await router.patch(route('event.remove.judge', { event_id, user_id }));
+    };
+
     return (
         <div className="flex flex-col gap-2">
-            <div className="card w-96 bg-base-100 shadow-lg">
+            <div className="card w-md bg-base-100 shadow-lg">
                 <div className="card-body">
                     <div className="flex justify-between">
-                        <div className="text-lg font-bold">Add Judges</div>
+                        <div className="text-lg font-bold">Judges</div>
                         <CreateJudgeModal btn_className="btn-xs" event_id={event.id} />
                     </div>
                     {judges.length > 0 ? (
@@ -76,9 +80,9 @@ const JudgesComponent = ({ event, judges }: { event: Event; judges: User[] }) =>
                     )}
                 </div>
             </div>
-            <div className="card w-96 bg-base-100 shadow-lg">
+            <div className="card w-md bg-base-100 shadow-lg">
                 <div className="card-body">
-                    <div className="text-lg font-bold">Event Judges</div>
+                    <div className="text-lg font-bold">{event.name} Judges</div>
                     {(event.judges?.length ?? 0 > 0) ? (
                         <div className="max-h-52 overflow-auto">
                             <table className="table table-sm">
@@ -87,6 +91,7 @@ const JudgesComponent = ({ event, judges }: { event: Event; judges: User[] }) =>
                                         <th>Name</th>
                                         <th>Username</th>
                                         <th>Password</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -95,6 +100,11 @@ const JudgesComponent = ({ event, judges }: { event: Event; judges: User[] }) =>
                                             <th>{judge.name}</th>
                                             <td>{judge.username}</td>
                                             <td>{judge.plain_password}</td>
+                                            <td>
+                                                <button onClick={() => handleJudgeRemoval(judge.id, event.id)} className="btn btn-xs btn-error">
+                                                    Remove
+                                                </button>
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>

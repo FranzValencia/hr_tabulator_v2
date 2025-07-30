@@ -23,9 +23,10 @@ const CreateJudgeModal = ({ event_id, btn_className }: ComponentProps) => {
             route('event.create.judge', { fullname: name, username, password }),
             {},
             {
+                onSuccess: () => {
+                    closeModal();
+                },
                 onError: () => {
-                    console.log(errors);
-
                     if (errors.username) {
                         setUsernameError(errors.username);
                     }
@@ -42,12 +43,22 @@ const CreateJudgeModal = ({ event_id, btn_className }: ComponentProps) => {
         setUsernameError('');
     };
 
+    const closeModal = () => {
+        const modal = document.getElementById('my_modal_2') as HTMLDialogElement | null;
+
+        clearInputs();
+        if (modal) {
+            modal.close();
+        }
+    };
+
     return (
         <>
             <button
                 className={`btn btn-success ${btn_className}`}
                 onClick={() => {
                     const modal = document.getElementById('my_modal_2') as HTMLDialogElement | null;
+
                     if (modal) {
                         modal.showModal();
                     }
@@ -86,7 +97,19 @@ const CreateJudgeModal = ({ event_id, btn_className }: ComponentProps) => {
                     </div>
                     <div className="divider"></div>
                     <div className="text-end">
-                        <button className="btn btn-success">Create</button>
+                        <button
+                            type="button"
+                            className="btn"
+                            onClick={() => {
+                                closeModal();
+                                clearInputs();
+                            }}
+                        >
+                            Cancel
+                        </button>
+                        <button type="submit" className="btn btn-success">
+                            Create
+                        </button>
                     </div>
                 </form>
 

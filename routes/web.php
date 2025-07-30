@@ -24,7 +24,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('home');
 
     Route::get('/admin/{id}', function ($id) {
-        $userIds = EventUser::where('user_id', $id)->pluck('user_id')->toArray();
+        $userIds = EventUser::where('event_id', $id)->where('status','active')->pluck('user_id')->toArray();
         $judges = User::where('status', 'active')
             ->whereNotIn('id', $userIds)
             ->whereNot('username', 'admin')
@@ -40,6 +40,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('/event/create', [EventController::class, 'event_create'])->name('event.create');
     Route::post('/event/add-judge', [EventController::class, 'add_judge'])->name('event.add.judge');
+    Route::patch('/event/remove-judge', [EventController::class, 'remove_judge'])->name('event.remove.judge');
     Route::post('/event/create-judge', [EventController::class, 'create_judge'])->name('event.create.judge');
 });
 

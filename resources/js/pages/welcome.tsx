@@ -133,26 +133,27 @@ const welcome = ({ events }: { events: Event[] }) => {
             <div className="card h-fit w-full max-w-xl bg-base-100 shadow-xl">
                 <div className="card-body">
                     <div className="text-lg font-bold">Events</div>
-                    <div className="overflow-x-auto border border-base-content/5 bg-base-100">
-                        <table className="table table-zebra">
-                            <tbody>
-                                {events.length === 0 && (
-                                    <div className="w-full border-2 border-base-300 bg-base-200 py-2 text-center"> No record found </div>
-                                )}
-                                {events.map((event, index) => (
-                                    <tr key={index}>
-                                        <td>{event.name}</td>
-                                        <td className="text-end">
-                                            <div className="flex" />
-                                            <Link href={route('admin', event.id)} className="btn btn-sm btn-neutral">
-                                                View
-                                            </Link>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                    {events.length === 0 ? (
+                        <div className="w-full border-2 border-base-300 bg-base-200 py-2 text-center"> No record found </div>
+                    ) : (
+                        <div className="overflow-x-auto border border-base-content/5 bg-base-100">
+                            <table className="table table-zebra">
+                                <tbody>
+                                    {events.map((event, index) => (
+                                        <tr key={index}>
+                                            <td>{event.name}</td>
+                                            <td className="text-end">
+                                                <div className="flex" />
+                                                <Link href={route('admin', event.id)} className="btn btn-sm btn-neutral">
+                                                    View
+                                                </Link>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

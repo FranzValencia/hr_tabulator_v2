@@ -22,9 +22,9 @@ class Event extends Model
         return $this->hasMany(Criterion::class);
     }
 
-      public function judges(): BelongsToMany
+    public function judges(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'event_user', 'event_id', 'user_id');
+        return $this->belongsToMany(User::class, 'event_user', 'event_id', 'user_id')->wherePivot('status', 'active');
     }
 
 

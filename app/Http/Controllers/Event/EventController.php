@@ -41,10 +41,29 @@ class EventController extends Controller
             'user_id' => 'required|integer',
         ]);
 
-        $event = EventUser::create([
+        EventUser::create([
             'event_id' => $validated['event_id'],
             'user_id' => $validated['user_id'],
         ]);
+    }
+
+    public function remove_judge (Request $request) {
+        try {
+            $validated = $request->validate([
+                'event_id' => 'required|integer',
+                'user_id' => 'required|integer',
+            ]);
+
+            $event = EventUser::where('user_id',$validated['user_id'])->where('event_id',$validated['event_id'])->where('status','active')->first();
+
+            $event->update([
+                'status' => 'in-active',
+            ]);
+        } catch (ValidationException $e) {
+            return back()->withErrors($e->validator)->withInput();
+        } catch (Exception $e) {
+            return back()->with('error', 'An unexpected error occurred. Please try again.');
+        }
     }
 
     public function create_judge(Request $request)
