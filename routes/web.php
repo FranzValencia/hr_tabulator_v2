@@ -33,6 +33,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('admin');
 
     Route::post('/event/create', [EventController::class, 'event_create'])->name('event.create');
+    Route::post('/event/add-judge', [EventController::class, 'add_judge'])->name('event.add.judge');
 });
 
 // require __DIR__.'/settings.php';
