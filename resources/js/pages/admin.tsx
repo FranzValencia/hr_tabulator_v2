@@ -4,14 +4,14 @@ import JudgesComponent from './_components/JudgesComponent';
 
 interface PageProps {
     event: Event;
-    judges: User[];
+    judges_to_choose_from: User[];
 }
 
-const admin = ({ event, judges }: PageProps) => {
+const admin = ({ event, judges_to_choose_from }: PageProps) => {
     return (
         <div className="flex h-screen p-4">
             <div>
-                <JudgesComponent event={event} judges={judges} />
+                <JudgesComponent event={event} judges={judges_to_choose_from} />
             </div>
             <div></div>
         </div>

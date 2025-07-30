@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Event extends Model
 {
@@ -21,9 +22,10 @@ class Event extends Model
         return $this->hasMany(Criterion::class);
     }
 
-     public function judges()
+      public function judges(): BelongsToMany
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class, 'event_user', 'event_id', 'user_id');
     }
+
 
 }

@@ -6,7 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Criterion;
 use App\Models\Event;
 use App\Models\EventUser;
+use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class EventController extends Controller
 {
@@ -41,5 +45,30 @@ class EventController extends Controller
             'event_id' => $validated['event_id'],
             'user_id' => $validated['user_id'],
         ]);
+    }
+
+    public function create_judge(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'fullname' => 'required|string',
+                'username' => 'required|string|unique:users',
+                'password' => 'required|string',
+            ]);
+
+            User::create([
+                'name' => $validated['fullname'],
+                'username' => $validated['username'],
+                'password' => Hash::make($validated['password']),
+                'plain_password' => $validated['password'], // Consider encrypting this if needed
+                'role' => 'judge', // Add role if needed
+            ]);
+
+            return back()->with('success', 'Judge created successfully.');
+        } catch (ValidationException $e) {
+            return back()->withErrors($e->validator)->withInput();
+        } catch (Exception $e) {
+            return back()->with('error', 'An unexpected error occurred. Please try again.');
+        }
     }
 }

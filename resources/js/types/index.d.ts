@@ -4,7 +4,6 @@ export interface Auth {
 
 export interface User {
     id: number;
-    event_id: number | null;
     name: string;
     username: string;
     plain_password: string;

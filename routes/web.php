@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Event\EventController;
 use App\Models\Event;
+use App\Models\EventUser;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -23,17 +24,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('home');
 
     Route::get('/admin/{id}', function ($id) {
-        $judges = User::where('status','active')->get();
-        $event = Event::with('criteria')->findOrFail($id);
+        $userIds = EventUser::where('user_id', $id)->pluck('user_id')->toArray();
+        $judges = User::where('status', 'active')
+            ->whereNotIn('id', $userIds)
+            ->whereNot('username', 'admin')
+            ->get();
+
+        $event = Event::with('criteria')->with('judges')->findOrFail($id);
 
         return Inertia::render('admin', [
-            'judges' => $judges,
+            'judges_to_choose_from' => $judges,
             'event' => $event,
         ]);
     })->name('admin');
 
     Route::post('/event/create', [EventController::class, 'event_create'])->name('event.create');
     Route::post('/event/add-judge', [EventController::class, 'add_judge'])->name('event.add.judge');
+    Route::post('/event/create-judge', [EventController::class, 'create_judge'])->name('event.create.judge');
 });
 
 // require __DIR__.'/settings.php';
