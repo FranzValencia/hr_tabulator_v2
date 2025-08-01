@@ -23,7 +23,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ]);
     })->name('home');
 
-    Route::get('/admin/{id}', function ($id) {
+    Route::get('/admin/event/{id}', function ($id) {
         $userIds = EventUser::where('event_id', $id)->where('status','active')->pluck('user_id')->toArray();
         $judges = User::where('status', 'active')
             ->whereNotIn('id', $userIds)

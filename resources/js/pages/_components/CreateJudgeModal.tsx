@@ -68,7 +68,7 @@ const CreateJudgeModal = ({ event_id, btn_className }: ComponentProps) => {
             </button>
             <dialog id="my_modal_2" className="modal">
                 <form onSubmit={(e) => handleSubmit(e)} className="modal-box max-w-sm">
-                    <h3 className="text-lg font-bold">Create new judge account</h3>
+                    <h3 className="text-lg font-bold">Create judge account</h3>
                     <div className="flex flex-col">
                         <fieldset className="fieldset">
                             <legend className="fieldset-legend">Fullname</legend>

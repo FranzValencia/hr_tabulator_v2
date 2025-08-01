@@ -78,10 +78,7 @@ const JudgesComponent = ({ event, judges }: { event: Event; judges: User[] }) =>
                     ) : (
                         <div className="bg-base-200 py-2 text-center text-xs font-bold text-base-content/25 uppercase">No Judge created</div>
                     )}
-                </div>
-            </div>
-            <div className="card w-md bg-base-100 shadow-lg">
-                <div className="card-body">
+                    <div className="divider my-0" />
                     <div className="text-lg font-bold">{event.name} Judges</div>
                     {(event.judges?.length ?? 0 > 0) ? (
                         <div className="max-h-52 overflow-auto">
