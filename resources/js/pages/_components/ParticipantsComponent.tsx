@@ -1,58 +1,51 @@
-import { User } from '@/types';
-import { Event } from '@/types/types';
+import { Event, Participant } from '@/types/types';
+import { router } from '@inertiajs/react';
+import { useState } from 'react';
 import CreateParticipantModal from './CreateParticipantModal';
 
-const ParticipantsComponent = ({ event, judges }: { event: Event; judges: User[] }) => {
+const ParticipantsComponent = ({ event }: { event: Event }) => {
+    const [selectedParticipant, setSelectedParticipant] = useState<Participant | null>(null);
+
+    const handleDelete = async () => {
+        if (!selectedParticipant) return;
+        await router.delete(route('remove.participant', { participant_id: selectedParticipant.id }));
+        setSelectedParticipant(null);
+        const modal = document.getElementById('deleteParticipantModal') as HTMLDialogElement | null;
+        modal?.close();
+    };
+
     return (
-        <div className="card w-md bg-base-100 shadow-lg">
+        <div className="card w-full bg-base-100 shadow-lg">
             <div className="card-body">
                 <div className="flex justify-between">
                     <div className="text-lg font-bold">{event.name} Participants</div>
                     <CreateParticipantModal event_id={event.id} btn_className="btn-xs" />
                 </div>
 
-                {(event.judges?.length ?? 0 > 0) ? (
+                {(event.participants?.length ?? 0) > 0 ? (
                     <div className="max-h-52 overflow-auto">
                         <table className="table table-sm">
                             <thead>
                                 <tr>
                                     <th>Name</th>
-                                    <th>Action</th>
+                                    <th className="text-end">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {event.judges?.map((judge: User, index) => (
+                                {event.participants?.map((participant: Participant, index) => (
                                     <tr key={index}>
-                                        <th>{judge.name}</th>
-                                        <td>
+                                        <th>{participant.name}</th>
+                                        <td className="flex justify-end">
                                             <button
                                                 className="btn btn-xs btn-error"
                                                 onClick={() => {
-                                                    const modal = document.getElementById('deleteJudgeModal') as HTMLDialogElement | null;
-                                                    if (modal) {
-                                                        modal.showModal();
-                                                    }
+                                                    setSelectedParticipant(participant);
+                                                    const modal = document.getElementById('deleteParticipantModal') as HTMLDialogElement | null;
+                                                    modal?.showModal();
                                                 }}
                                             >
                                                 Remove
                                             </button>
-                                            <dialog id="deleteJudgeModal" className="modal">
-                                                <div className="modal-box max-w-sm">
-                                                    <h3 className="text-lg font-bold">Remove Judge </h3>
-
-                                                    <h1 className="mt-2 text-sm">
-                                                        Are you sure you want to remove <span className="font-bold">{judge.name}</span> as Judge for{' '}
-                                                        {event.name}?
-                                                    </h1>
-                                                    <div className="modal-action">
-                                                        <form method="dialog">
-                                                            {/* if there is a button in form, it will close the modal */}
-                                                            <button className="btn">Cancel</button>
-                                                            <button className="btn btn-error">Remove</button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </dialog>
                                         </td>
                                     </tr>
                                 ))}
@@ -60,9 +53,30 @@ const ParticipantsComponent = ({ event, judges }: { event: Event; judges: User[]
                         </table>
                     </div>
                 ) : (
-                    <div className="bg-base-200 py-2 text-center text-xs font-bold text-base-content/25 uppercase">No Judges selected</div>
+                    <div className="bg-base-200 py-2 text-center text-xs font-bold text-base-content/25 uppercase">No Participants</div>
                 )}
             </div>
+
+            {/* Single Delete Modal */}
+            <dialog id="deleteParticipantModal" className="modal">
+                <div className="modal-box max-w-sm">
+                    <h3 className="text-lg font-bold">Remove Participant</h3>
+
+                    <h1 className="mt-2 text-sm">
+                        Are you sure you want to remove <span className="font-bold">{selectedParticipant?.name}</span> as Participant for {event.name}
+                        ?
+                    </h1>
+
+                    <div className="modal-action">
+                        <form method="dialog">
+                            <button className="btn">Cancel</button>
+                            <button type="button" className="btn btn-error" onClick={handleDelete}>
+                                Remove
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </dialog>
         </div>
     );
 };

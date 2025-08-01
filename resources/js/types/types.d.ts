@@ -10,4 +10,12 @@ export interface Event {
     status: 'active' | 'in-active';
     criteria?: Criterion[];
     judges?: User[];
+    participants?: Participant[];
+}
+
+export interface Participant {
+    id: number;
+    event_id: number;
+    name: string;
+    event?: Event;
 }

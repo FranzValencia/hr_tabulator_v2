@@ -1,21 +1,28 @@
 import { User } from '@/types';
 import { Event } from '@/types/types';
 import { router } from '@inertiajs/react';
+import { useState } from 'react';
 import CreateJudgeModal from './CreateJudgeModal';
 
 const JudgesComponent = ({ event, judges }: { event: Event; judges: User[] }) => {
-    const handleJudgeRemoval = async (user_id: number, event_id: number) => {
-        await router.delete(route('event.remove.judge', { event_id, user_id }));
+    const [selectedJudge, setSelectedJudge] = useState<User | null>(null);
+
+    const handleJudgeRemoval = async () => {
+        if (!selectedJudge) return;
+        await router.delete(route('event.remove.judge', { event_id: event.id, user_id: selectedJudge.id }));
+        setSelectedJudge(null);
     };
 
     return (
         <div className="flex flex-col gap-2">
-            <div className="card w-md bg-base-100 shadow-lg">
+            <div className="card w-full bg-base-100 shadow-lg">
                 <div className="card-body">
                     <div className="flex justify-between">
                         <div className="text-lg font-bold">Judges</div>
                         <CreateJudgeModal btn_className="btn-xs" event_id={event.id} />
                     </div>
+
+                    {/* Available judges list */}
                     {judges.length > 0 ? (
                         <div className="max-h-52 overflow-auto">
                             <table className="table-pin-rows table bg-base-200 table-xs">
@@ -32,43 +39,12 @@ const JudgesComponent = ({ event, judges }: { event: Event; judges: User[] }) =>
                                             <th>{judge.name}</th>
                                             <td>{judge.username}</td>
                                             <td>
-                                                {/* Open the modal using document.getElementById('ID').showModal() method */}
                                                 <button
                                                     className="btn btn-xs btn-success"
-                                                    onClick={() => {
-                                                        const modal = document.getElementById('my_modal_1') as HTMLDialogElement | null;
-                                                        if (modal) {
-                                                            modal.showModal();
-                                                        }
-                                                    }}
+                                                    onClick={() => router.post(route('event.add.judge', { event_id: event.id, user_id: judge.id }))}
                                                 >
                                                     Add
                                                 </button>
-                                                <dialog id="my_modal_1" className="modal">
-                                                    <div className="modal-box max-w-sm">
-                                                        <h3 className="text-lg font-bold">Add Judge </h3>
-
-                                                        <h1 className="mt-2 text-sm">
-                                                            Add <span className="font-bold">{judge.name}</span> as Judge for {event.name}?
-                                                        </h1>
-                                                        <div className="modal-action">
-                                                            <form method="dialog">
-                                                                {/* if there is a button in form, it will close the modal */}
-                                                                <button className="btn">Cancel</button>
-                                                                <button
-                                                                    className="btn btn-success"
-                                                                    onClick={() =>
-                                                                        router.post(
-                                                                            route('event.add.judge', { event_id: event.id, user_id: judge.id }),
-                                                                        )
-                                                                    }
-                                                                >
-                                                                    Add
-                                                                </button>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </dialog>
                                             </td>
                                         </tr>
                                     ))}
@@ -78,9 +54,11 @@ const JudgesComponent = ({ event, judges }: { event: Event; judges: User[] }) =>
                     ) : (
                         <div className="bg-base-200 py-2 text-center text-xs font-bold text-base-content/25 uppercase">No Judge created</div>
                     )}
+
                     <div className="divider my-0" />
                     <div className="text-lg font-bold">{event.name} Judges</div>
-                    {(event.judges?.length ?? 0 > 0) ? (
+
+                    {(event.judges?.length ?? 0) > 0 ? (
                         <div className="max-h-52 overflow-auto">
                             <table className="table table-sm">
                                 <thead>
@@ -101,36 +79,13 @@ const JudgesComponent = ({ event, judges }: { event: Event; judges: User[] }) =>
                                                 <button
                                                     className="btn btn-xs btn-error"
                                                     onClick={() => {
+                                                        setSelectedJudge(judge);
                                                         const modal = document.getElementById('deleteJudgeModal') as HTMLDialogElement | null;
-                                                        if (modal) {
-                                                            modal.showModal();
-                                                        }
+                                                        modal?.showModal();
                                                     }}
                                                 >
                                                     Remove
                                                 </button>
-                                                <dialog id="deleteJudgeModal" className="modal">
-                                                    <div className="modal-box max-w-sm">
-                                                        <h3 className="text-lg font-bold">Remove Judge </h3>
-
-                                                        <h1 className="mt-2 text-sm">
-                                                            Are you sure you want to remove <span className="font-bold">{judge.name}</span> as Judge
-                                                            for {event.name}?
-                                                        </h1>
-                                                        <div className="modal-action">
-                                                            <form method="dialog">
-                                                                {/* if there is a button in form, it will close the modal */}
-                                                                <button className="btn">Cancel</button>
-                                                                <button
-                                                                    className="btn btn-error"
-                                                                    onClick={() => handleJudgeRemoval(judge.id, event.id)}
-                                                                >
-                                                                    Remove
-                                                                </button>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </dialog>
                                             </td>
                                         </tr>
                                     ))}
@@ -142,6 +97,26 @@ const JudgesComponent = ({ event, judges }: { event: Event; judges: User[] }) =>
                     )}
                 </div>
             </div>
+
+            {/* Single reusable delete modal */}
+            <dialog id="deleteJudgeModal" className="modal">
+                <div className="modal-box max-w-sm">
+                    <h3 className="text-lg font-bold">Remove Judge</h3>
+                    <h1 className="mt-2 text-sm">
+                        Are you sure you want to remove <span className="font-bold">{selectedJudge?.name}</span> as Judge for {event.name}?
+                    </h1>
+                    <div className="modal-action">
+                        <form method="dialog">
+                            <button className="btn" onClick={() => setSelectedJudge(null)}>
+                                Cancel
+                            </button>
+                            <button className="btn btn-error" onClick={handleJudgeRemoval}>
+                                Remove
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </dialog>
         </div>
     );
 };

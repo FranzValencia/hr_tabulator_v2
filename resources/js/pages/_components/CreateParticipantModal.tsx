@@ -1,3 +1,4 @@
+import { useToast } from '@/context/ToastContext';
 import { router } from '@inertiajs/react';
 import { useState } from 'react';
 
@@ -8,6 +9,7 @@ interface ComponentProps {
 
 const CreateParticipantModal = ({ btn_className, event_id }: ComponentProps) => {
     const [participant, setParticipant] = useState('');
+    const { showToast } = useToast();
 
     const closeModal = () => {
         const modal = document.getElementById('createParticipantModal') as HTMLDialogElement | null;
@@ -20,7 +22,16 @@ const CreateParticipantModal = ({ btn_className, event_id }: ComponentProps) => 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        await router.post(route('create.participant', { name: participant, event_id }));
+        await router.post(
+            route('create.participant', { name: participant, event_id }),
+            {},
+            {
+                onSuccess: () => {
+                    closeModal();
+                    showToast('Participant added successully', 'success');
+                },
+            },
+        );
     };
 
     return (

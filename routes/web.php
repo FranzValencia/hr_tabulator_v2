@@ -32,7 +32,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->whereNot('username', 'admin')
             ->get();
 
-        $event = Event::with('criteria')->with('judges')->findOrFail($id);
+        $event = Event::with('criteria')->with('judges')->with('participants')->findOrFail($id);
 
         return Inertia::render('admin', [
             'judges_to_choose_from' => $judges,
@@ -49,6 +49,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // PARTICIPANT CONTROLLER ROUTES
     Route::post('/create-participant', [ParticipantController::class, 'create_participant'])->name('create.participant');
+    Route::delete('/remove-participant', [ParticipantController::class, 'remove_participant'])->name('remove.participant');
 });
 
 // require __DIR__.'/settings.php';

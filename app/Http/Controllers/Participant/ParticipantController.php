@@ -19,4 +19,13 @@ class ParticipantController extends Controller
             'event_id' => $validated['event_id'],
         ]);
     }
+
+    public function remove_participant (Request $request) {
+        $validated = $request->validate([
+            'participant_id' => 'required|integer',
+        ]);
+
+        $participant = Participant::find($validated['participant_id']);
+        $participant->delete();
+    }
 }
