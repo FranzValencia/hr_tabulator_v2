@@ -1,10 +1,12 @@
+import { router } from '@inertiajs/react';
 import { useState } from 'react';
 
 interface ComponentProps {
     btn_className?: string;
+    event_id: number;
 }
 
-const CreateParticipantModal = ({ btn_className }: ComponentProps) => {
+const CreateParticipantModal = ({ btn_className, event_id }: ComponentProps) => {
     const [participant, setParticipant] = useState('');
 
     const closeModal = () => {
@@ -13,6 +15,12 @@ const CreateParticipantModal = ({ btn_className }: ComponentProps) => {
         if (modal) {
             modal.close();
         }
+    };
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        await router.post(route('create.participant', { name: participant, event_id }));
     };
 
     return (
@@ -31,7 +39,7 @@ const CreateParticipantModal = ({ btn_className }: ComponentProps) => {
                 New Participant
             </button>
             <dialog id="createParticipantModal" className="modal">
-                <form className="modal-box max-w-sm">
+                <form onSubmit={(e) => handleSubmit(e)} className="modal-box max-w-sm">
                     <h3 className="text-lg font-bold">Create Participant</h3>
                     <div className="flex flex-col">
                         <fieldset className="fieldset">

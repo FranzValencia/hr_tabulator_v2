@@ -8,7 +8,7 @@ const ParticipantsComponent = ({ event, judges }: { event: Event; judges: User[]
             <div className="card-body">
                 <div className="flex justify-between">
                     <div className="text-lg font-bold">{event.name} Participants</div>
-                    <CreateParticipantModal btn_className="btn-xs" />
+                    <CreateParticipantModal event_id={event.id} btn_className="btn-xs" />
                 </div>
 
                 {(event.judges?.length ?? 0 > 0) ? (

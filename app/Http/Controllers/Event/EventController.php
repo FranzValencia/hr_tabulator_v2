@@ -5,12 +5,8 @@ namespace App\Http\Controllers\Event;
 use App\Http\Controllers\Controller;
 use App\Models\Criterion;
 use App\Models\Event;
-use App\Models\EventUser;
-use App\Models\User;
-use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
+
 
 class EventController extends Controller
 {
@@ -35,62 +31,5 @@ class EventController extends Controller
         }
     }
 
-    public function add_judge (Request $request) {
-       $validated = $request->validate([
-            'event_id' => 'required|integer',
-            'user_id' => 'required|integer',
-        ]);
-
-        EventUser::create([
-            'event_id' => $validated['event_id'],
-            'user_id' => $validated['user_id'],
-        ]);
-    }
-
-    public function remove_judge (Request $request) {
-        try {
-            $validated = $request->validate([
-                'event_id' => 'required|integer',
-                'user_id' => 'required|integer',
-            ]);
-
-            $event = EventUser::where('user_id', $validated['user_id'])
-                ->where('event_id', $validated['event_id'])
-                ->where('status', 'active')
-                ->first();
-
-            if ($event) {
-                $event->delete();
-            }
-        } catch (ValidationException $e) {
-            return back()->withErrors($e->validator)->withInput();
-        } catch (Exception $e) {
-            return back()->with('error', 'An unexpected error occurred. Please try again.');
-        }
-    }
-
-    public function create_judge(Request $request)
-    {
-        try {
-            $validated = $request->validate([
-                'fullname' => 'required|string',
-                'username' => 'required|string|unique:users',
-                'password' => 'required|string',
-            ]);
-
-            User::create([
-                'name' => $validated['fullname'],
-                'username' => $validated['username'],
-                'password' => Hash::make($validated['password']),
-                'plain_password' => $validated['password'], // Consider encrypting this if needed
-                'role' => 'judge', // Add role if needed
-            ]);
-
-            return back()->with('success', 'Judge created successfully.');
-        } catch (ValidationException $e) {
-            return back()->withErrors($e->validator)->withInput();
-        } catch (Exception $e) {
-            return back()->with('error', 'An unexpected error occurred. Please try again.');
-        }
-    }
+   
 }

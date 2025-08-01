@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Event\EventController;
+use App\Http\Controllers\Judge\JudgeController;
+use App\Http\Controllers\Participant\ParticipantController;
 use App\Models\Event;
 use App\Models\EventUser;
 use App\Models\User;
@@ -39,9 +41,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('admin');
 
     Route::post('/event/create', [EventController::class, 'event_create'])->name('event.create');
-    Route::post('/event/add-judge', [EventController::class, 'add_judge'])->name('event.add.judge');
-    Route::delete('/event/remove-judge', [EventController::class, 'remove_judge'])->name('event.remove.judge');
-    Route::post('/event/create-judge', [EventController::class, 'create_judge'])->name('event.create.judge');
+
+    // JUDGE CONTROLLER ROUTES
+    Route::post('/add-judge', [JudgeController::class, 'add_judge'])->name('event.add.judge');
+    Route::delete('/remove-judge', [JudgeController::class, 'remove_judge'])->name('event.remove.judge');
+    Route::post('/create-judge', [JudgeController::class, 'create_judge'])->name('event.create.judge');
+
+    // PARTICIPANT CONTROLLER ROUTES
+    Route::post('/create-participant', [ParticipantController::class, 'create_participant'])->name('create.participant');
 });
 
 // require __DIR__.'/settings.php';
