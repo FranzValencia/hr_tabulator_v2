@@ -29,6 +29,7 @@ const CreateContestantModal = ({ btn_className, event_id }: ComponentProps) => {
                 onSuccess: () => {
                     closeModal();
                     showToast('Contestant added successully', 'success');
+                    setContestant('');
                 },
             },
         );

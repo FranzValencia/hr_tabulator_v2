@@ -7,6 +7,7 @@ use App\Http\Controllers\Contestant\ContestantController;
 use App\Models\Event;
 use App\Models\EventUser;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -19,6 +20,15 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::post('/sign-out', function () {
+        Auth::logout();
+
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
+
+        return to_route('login');
+    })->name('logout');
+
     Route::get('/', function () {
         return Inertia::render('welcome',[
             'events' => Event::where('status','active')->get(),
@@ -32,7 +42,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->whereNot('username', 'admin')
             ->get();
 
-        $event = Event::with('criteria')->with('judges')->with('contestants')->findOrFail($id);
+        $event = Event::with('criteria')->with('judges')->with('contestants')->with('scores')->findOrFail($id);
 
         return Inertia::render('admin', [
             'judges_to_choose_from' => $judges,
@@ -52,5 +62,4 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/remove-contestant', [ContestantController::class, 'remove_contestant'])->name('remove.contestant');
 });
 
-// require __DIR__.'/settings.php';
-// require __DIR__.'/auth.php';
+require __DIR__.'/judge.php';

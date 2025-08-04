@@ -22,7 +22,14 @@ class AuthController extends Controller
             $request->session()->regenerate();
 
             // Return success response
-           return redirect()->intended(route('home'));
+            $user = Auth::user();
+            if($user->role !== 'judge'){
+                return redirect()->intended(route('home'));
+            } else {
+                return redirect()->intended(route('judge'));
+            }
+
+            
         }
 
         return back()->withErrors([

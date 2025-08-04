@@ -1,4 +1,5 @@
 import { useToast } from '@/context/ToastContext';
+import AuthenticatedLayout from '@/layouts/AuthenticatedLayout';
 import { Criterion, Event } from '@/types/types';
 import { Link, router } from '@inertiajs/react';
 import { X } from 'lucide-react';
@@ -46,7 +47,7 @@ const welcome = ({ events }: { events: Event[] }) => {
     };
 
     return (
-        <div className="flex h-screen justify-evenly p-8">
+        <AuthenticatedLayout className="flex justify-evenly p-8">
             <div className="card h-fit w-full max-w-xl bg-base-100 shadow-xl">
                 <div className="card-body">
                     <div className="text-lg font-bold">New Event</div>
@@ -156,7 +157,7 @@ const welcome = ({ events }: { events: Event[] }) => {
                     )}
                 </div>
             </div>
-        </div>
+        </AuthenticatedLayout>
     );
 };
 
