@@ -1,16 +1,16 @@
-import { Event, Participant } from '@/types/types';
+import { Contestant, Event } from '@/types/types';
 import { router } from '@inertiajs/react';
 import { useState } from 'react';
-import CreateParticipantModal from './CreateParticipantModal';
+import CreateContestantModal from './CreateContestantModal';
 
-const ParticipantsComponent = ({ event }: { event: Event }) => {
-    const [selectedParticipant, setSelectedParticipant] = useState<Participant | null>(null);
+const ContestantsComponent = ({ event }: { event: Event }) => {
+    const [selectedParticipant, setSelectedParticipant] = useState<Contestant | null>(null);
 
     const handleDelete = async () => {
         if (!selectedParticipant) return;
-        await router.delete(route('remove.participant', { participant_id: selectedParticipant.id }));
+        await router.delete(route('remove.contestant', { contestant_id: selectedParticipant.id }));
         setSelectedParticipant(null);
-        const modal = document.getElementById('deleteParticipantModal') as HTMLDialogElement | null;
+        const modal = document.getElementById('deleteContestantModal') as HTMLDialogElement | null;
         modal?.close();
     };
 
@@ -19,10 +19,10 @@ const ParticipantsComponent = ({ event }: { event: Event }) => {
             <div className="card-body">
                 <div className="flex justify-between">
                     <div className="text-lg font-bold">{event.name} Participants</div>
-                    <CreateParticipantModal event_id={event.id} btn_className="btn-xs" />
+                    <CreateContestantModal event_id={event.id} btn_className="btn-xs" />
                 </div>
 
-                {(event.participants?.length ?? 0) > 0 ? (
+                {(event.contestants?.length ?? 0) > 0 ? (
                     <div className="max-h-52 overflow-auto">
                         <table className="table table-sm">
                             <thead>
@@ -32,7 +32,7 @@ const ParticipantsComponent = ({ event }: { event: Event }) => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {event.participants?.map((participant: Participant, index) => (
+                                {event.contestants?.map((participant: Contestant, index) => (
                                     <tr key={index}>
                                         <th>{participant.name}</th>
                                         <td className="flex justify-end">
@@ -40,7 +40,7 @@ const ParticipantsComponent = ({ event }: { event: Event }) => {
                                                 className="btn btn-xs btn-error"
                                                 onClick={() => {
                                                     setSelectedParticipant(participant);
-                                                    const modal = document.getElementById('deleteParticipantModal') as HTMLDialogElement | null;
+                                                    const modal = document.getElementById('deleteContestantModal') as HTMLDialogElement | null;
                                                     modal?.showModal();
                                                 }}
                                             >
@@ -58,7 +58,7 @@ const ParticipantsComponent = ({ event }: { event: Event }) => {
             </div>
 
             {/* Single Delete Modal */}
-            <dialog id="deleteParticipantModal" className="modal">
+            <dialog id="deleteContestantModal" className="modal">
                 <div className="modal-box max-w-sm">
                     <h3 className="text-lg font-bold">Remove Participant</h3>
 
@@ -81,4 +81,4 @@ const ParticipantsComponent = ({ event }: { event: Event }) => {
     );
 };
 
-export default ParticipantsComponent;
+export default ContestantsComponent;

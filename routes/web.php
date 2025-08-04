@@ -3,7 +3,7 @@
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Event\EventController;
 use App\Http\Controllers\Judge\JudgeController;
-use App\Http\Controllers\Participant\ParticipantController;
+use App\Http\Controllers\Contestant\ContestantController;
 use App\Models\Event;
 use App\Models\EventUser;
 use App\Models\User;
@@ -32,7 +32,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->whereNot('username', 'admin')
             ->get();
 
-        $event = Event::with('criteria')->with('judges')->with('participants')->findOrFail($id);
+        $event = Event::with('criteria')->with('judges')->with('contestants')->findOrFail($id);
 
         return Inertia::render('admin', [
             'judges_to_choose_from' => $judges,
@@ -48,8 +48,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/create-judge', [JudgeController::class, 'create_judge'])->name('event.create.judge');
 
     // PARTICIPANT CONTROLLER ROUTES
-    Route::post('/create-participant', [ParticipantController::class, 'create_participant'])->name('create.participant');
-    Route::delete('/remove-participant', [ParticipantController::class, 'remove_participant'])->name('remove.participant');
+    Route::post('/create-contestant', [ContestantController::class, 'create_contestant'])->name('create.contestant');
+    Route::delete('/remove-contestant', [ContestantController::class, 'remove_contestant'])->name('remove.contestant');
 });
 
 // require __DIR__.'/settings.php';

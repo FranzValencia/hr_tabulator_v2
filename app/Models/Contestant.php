@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Participant extends Model
+class Contestant extends Model
 {
        /**
      * The attributes that are mass assignable.
@@ -20,4 +20,10 @@ class Participant extends Model
     {
         return $this->belongsTo(Event::class);
     }
+
+    public function scores()
+    {
+        return $this->hasMany(Score::class);
+    }
+
 }

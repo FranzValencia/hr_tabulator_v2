@@ -27,9 +27,14 @@ class Event extends Model
         return $this->belongsToMany(User::class, 'event_user', 'event_id', 'user_id')->wherePivot('status', 'active');
     }
 
-      public function participants()
+      public function contestants()
     {
-        return $this->hasMany(Participant::class);
+        return $this->hasMany(Contestant::class);
+    }
+
+    public function scores()
+    {
+        return $this->hasMany(Score::class);
     }
 
 }

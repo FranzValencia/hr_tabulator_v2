@@ -1,8 +1,8 @@
 import { User } from '@/types';
 import { Event } from '@/types/types';
 import { MoveLeft } from 'lucide-react';
+import ContestantsComponent from './_components/ContestantsComponent';
 import JudgesComponent from './_components/JudgesComponent';
-import ParticipantsComponent from './_components/ParticipantsComponent';
 
 interface PageProps {
     event: Event;
@@ -24,7 +24,7 @@ const admin = ({ event, judges_to_choose_from }: PageProps) => {
                 <div className="divider" />
                 <JudgesComponent event={event} judges={judges_to_choose_from} />
                 <div className="divider" />
-                <ParticipantsComponent event={event} />
+                <ContestantsComponent event={event} />
             </div>
             <div className="w-full overflow-auto"></div>
         </div>

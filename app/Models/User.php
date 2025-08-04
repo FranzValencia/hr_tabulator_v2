@@ -51,4 +51,9 @@ class User extends Authenticatable
         return $this->belongsToMany(Event::class, 'event_user', 'user_id' , 'event_id');
     }
 
+    public function scoresGiven()
+    {
+        return $this->hasMany(Score::class, 'judge_id');
+    }
+
 }

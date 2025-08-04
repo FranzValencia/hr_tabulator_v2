@@ -7,12 +7,12 @@ interface ComponentProps {
     event_id: number;
 }
 
-const CreateParticipantModal = ({ btn_className, event_id }: ComponentProps) => {
-    const [participant, setParticipant] = useState('');
+const CreateContestantModal = ({ btn_className, event_id }: ComponentProps) => {
+    const [contestant, setContestant] = useState('');
     const { showToast } = useToast();
 
     const closeModal = () => {
-        const modal = document.getElementById('createParticipantModal') as HTMLDialogElement | null;
+        const modal = document.getElementById('createContestantModal') as HTMLDialogElement | null;
 
         if (modal) {
             modal.close();
@@ -23,12 +23,12 @@ const CreateParticipantModal = ({ btn_className, event_id }: ComponentProps) => 
         e.preventDefault();
 
         await router.post(
-            route('create.participant', { name: participant, event_id }),
+            route('create.contestant', { name: contestant, event_id }),
             {},
             {
                 onSuccess: () => {
                     closeModal();
-                    showToast('Participant added successully', 'success');
+                    showToast('Contestant added successully', 'success');
                 },
             },
         );
@@ -40,28 +40,22 @@ const CreateParticipantModal = ({ btn_className, event_id }: ComponentProps) => 
             <button
                 className={`btn btn-success ${btn_className}`}
                 onClick={() => {
-                    const modal = document.getElementById('createParticipantModal') as HTMLDialogElement | null;
+                    const modal = document.getElementById('createContestantModal') as HTMLDialogElement | null;
 
                     if (modal) {
                         modal.showModal();
                     }
                 }}
             >
-                New Participant
+                New Contestant
             </button>
-            <dialog id="createParticipantModal" className="modal">
+            <dialog id="createContestantModal" className="modal">
                 <form onSubmit={(e) => handleSubmit(e)} className="modal-box max-w-sm">
-                    <h3 className="text-lg font-bold">Create Participant</h3>
+                    <h3 className="text-lg font-bold">Create Contestant</h3>
                     <div className="flex flex-col">
                         <fieldset className="fieldset">
-                            <legend className="fieldset-legend">Participant name</legend>
-                            <input
-                                type="text"
-                                className="input w-full"
-                                required
-                                value={participant}
-                                onChange={(e) => setParticipant(e.target.value)}
-                            />
+                            <legend className="fieldset-legend">Contestant name</legend>
+                            <input type="text" className="input w-full" required value={contestant} onChange={(e) => setContestant(e.target.value)} />
                         </fieldset>
                     </div>
                     <div className="divider"></div>
@@ -89,4 +83,4 @@ const CreateParticipantModal = ({ btn_className, event_id }: ComponentProps) => 
     );
 };
 
-export default CreateParticipantModal;
+export default CreateContestantModal;
