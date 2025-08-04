@@ -3,8 +3,12 @@
 namespace App\Http\Controllers\Judge;
 
 use App\Http\Controllers\Controller;
+use App\Models\Contestant;
+use App\Models\Criterion;
+use App\Models\Event;
 use Illuminate\Http\Request;
 use App\Models\EventUser;
+use App\Models\Score;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Hash;
@@ -12,16 +16,30 @@ use Illuminate\Validation\ValidationException;
 
 class JudgeController extends Controller
 {
-     public function add_judge (Request $request) {
+    public function add_judge (Request $request) {
        $validated = $request->validate([
             'event_id' => 'required|integer',
             'user_id' => 'required|integer',
         ]);
 
-        EventUser::create([
+        $judge = EventUser::create([
             'event_id' => $validated['event_id'],
             'user_id' => $validated['user_id'],
         ]);
+
+        $contestants = Contestant::where('event_id',$validated['event_id'])->get();
+        $criteria = Criterion::where('event_id',$validated['event_id'])->get();
+
+        foreach($contestants as $contestant){
+            foreach($criteria as $criterion){
+                Score::create([
+                    'event_id' => $validated['event_id'],
+                    'judge_id' => $judge->id,
+                    'contestant_id' => $contestant->id,
+                    'criterion_id' => $criterion->id,
+                ]);
+            }
+        }
     }
 
     public function remove_judge (Request $request) {

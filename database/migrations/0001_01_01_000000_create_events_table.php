@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('events', function (Blueprint $table) {
+            $table->id();
             $table->string('name');
             $table->enum('status',['active','in-active'])->default('active');
-            $table->id();
             $table->timestamps();
         });
     }
