@@ -10,7 +10,18 @@ export interface Event {
     status: 'active' | 'in-active';
     criteria?: Criterion[];
     judges?: User[];
+    scores?: Score[];
     contestants?: Contestant[];
+}
+
+export interface EventUser {
+    id: number;
+    event_id: number;
+    user_id: number;
+    scores?: Score[];
+    event?: Event;
+    criteria?: Criterion[];
+    status: 'active' | 'in-active';
 }
 
 export interface Contestant {

@@ -7,22 +7,30 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::middleware(['auth', 'verified'])->group(function () {
-   Route::get('/judge', function () {
-    $user = Auth::user();
+    Route::get('/judge', function () {
+        $user = Auth::user();
 
-    // Get all events where the current user is an active judge
-    $events = Event::whereHas('judges', function ($query) use ($user) {
-        $query->where('users.id', $user->id)
-              ->where('event_user.status', 'active');
-    })
-    ->where('status','active')
-    ->with(['criteria', 'contestants', 'scores']) // preload relationships if needed
-    ->get();
+        $events = EventUser::where('user_id', $user->id)
+            ->where('status', 'active')
+            ->with([
+                'event.contestants',
+                'event.scores' => function ($query) use ($user) {
+                    $query->whereIn('event_user_id', function($sub) use ($user) {
+                        $sub->select('id')
+                            ->from('event_user')
+                            ->where('user_id', $user->id)
+                            ->where('status', 'active');
+                    });
+                },
+                'event.criteria'
+            ])
+            ->get();
 
-    return Inertia::render('judge', [
-        'events' => $events,
-    ]);
-})->name('judge');
+        return Inertia::render('judge', [
+            'eventUsers' => $events,
+        ]);
+    })->name('judge');
+
 });
 
 // require __DIR__.'/settings.php';
