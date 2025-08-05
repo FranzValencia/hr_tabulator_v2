@@ -24,10 +24,10 @@ class AuthController extends Controller
             // Return success response
             $user = Auth::user();
             if($user->role !== 'judge'){
-                return redirect()->to_route(route('home'));
+                return to_route('home');
             } else {
                 // return redirect()->intended(route('judge'));
-                return redirect()->to_route(route('judge'));
+                return to_route('judge');
             }
 
             

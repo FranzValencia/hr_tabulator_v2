@@ -8,7 +8,7 @@ class Score extends Model
 {
      protected $fillable = [
         'event_id',
-        'judge_id',
+        'event_user_id',
         'contestant_id',
         'criterion_id',
         'score'

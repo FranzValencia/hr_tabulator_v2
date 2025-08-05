@@ -29,7 +29,7 @@ class ContestantController extends Controller
             foreach($criteria as $criterion){
                 Score::create([
                     'event_id' => $validated['event_id'],
-                    'judge_id' => $judge->id,
+                    'event_user_id' => $judge->id,
                     'contestant_id' => $contestant->id,
                     'criterion_id' => $criterion->id,
                 ]);

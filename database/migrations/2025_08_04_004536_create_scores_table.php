@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('scores', function (Blueprint $table) {
             $table->id();
             $table->foreignId('event_id')->constrained()->onDelete('cascade');
-            $table->foreignId('judge_id')->constrained('event_user')->onDelete('cascade');
+            $table->foreignId('event_user_id')->constrained()->onDelete('cascade');
             $table->foreignId('contestant_id')->constrained()->onDelete('cascade');
             $table->foreignId('criterion_id')->constrained('criteria')->onDelete('cascade');
             $table->integer('score')->nullable();
