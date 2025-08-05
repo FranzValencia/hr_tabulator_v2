@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Event;
 use App\Http\Controllers\Controller;
 use App\Models\Criterion;
 use App\Models\Event;
+use App\Models\Score;
 use Illuminate\Http\Request;
 
 
@@ -30,6 +31,31 @@ class EventController extends Controller
             ]);
         }
     }
+
+
+
+    public function update_scores(Request $request)
+    {        
+        $scores = $request->input('scores', []);
+
+        foreach ($scores as $score) {
+            $score = (array) $score; // convert object to array
+
+            if (!isset($score['id'], $score['score'])) {
+                continue; // skip invalid data
+            }
+
+            $scoreToUpdate = Score::find($score['id']);
+
+            if ($scoreToUpdate) {
+                $scoreToUpdate->update([
+                    'score' => $score['score'],
+                ]);
+            }
+        }
+
+    }
+
 
    
 }

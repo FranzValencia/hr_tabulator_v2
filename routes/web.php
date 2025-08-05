@@ -30,12 +30,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('logout');
 
     Route::get('/', function () {
+        $user = Auth::user();
+
+        if($user->role !== 'administrator'){
+            return to_route('judge');
+        }
+        
         return Inertia::render('welcome',[
             'events' => Event::where('status','active')->get(),
         ]);
     })->name('home');
 
     Route::get('/admin/event/{id}', function ($id) {
+        $user = Auth::user();
+
+        if($user->role !== 'administrator'){
+            return to_route('judge');
+        }
+        
         $userIds = EventUser::where('event_id', $id)->where('status','active')->pluck('user_id')->toArray();
         $judges = User::where('status', 'active')
             ->whereNotIn('id', $userIds)
@@ -60,6 +72,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // PARTICIPANT CONTROLLER ROUTES
     Route::post('/create-contestant', [ContestantController::class, 'create_contestant'])->name('create.contestant');
     Route::delete('/remove-contestant', [ContestantController::class, 'remove_contestant'])->name('remove.contestant');
+
+    
 });
 
 require __DIR__.'/judge.php';

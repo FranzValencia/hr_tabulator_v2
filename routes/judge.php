@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Event\EventController;
 use App\Models\Event;
 use App\Models\EventUser;
 use Illuminate\Support\Facades\Auth;
@@ -9,6 +10,10 @@ use Inertia\Inertia;
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/judge', function () {
         $user = Auth::user();
+
+        if($user->role !== 'judge'){
+            return to_route('home');
+        }
 
         $events = EventUser::where('user_id', $user->id)
             ->where('status', 'active')
@@ -30,6 +35,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'eventUsers' => $events,
         ]);
     })->name('judge');
+
+     // PARTICIPANT CONTROLLER ROUTES
+    Route::patch('/update-scores', [EventController::class, 'update_scores'])->name('update.scores');
 
 });
 
