@@ -52,7 +52,7 @@ const JudgesComponent = ({ event, judges }: { event: Event; judges: User[] }) =>
                             </table>
                         </div>
                     ) : (
-                        <div className="bg-base-200 py-2 text-center text-xs font-bold text-base-content/25 uppercase">No Judge created</div>
+                        <div className="bg-base-200 py-2 text-center text-xs font-bold text-base-content/25 uppercase">No Judge available</div>
                     )}
 
                     <div className="divider my-0" />
