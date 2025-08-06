@@ -1,14 +1,6 @@
 import { router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
-export interface PageProps {
-    errors?: {
-        username?: string;
-        password?: string;
-        // Add other possible error fields
-    };
-}
-
 const login = () => {
     const { errors } = usePage().props;
     const [username, setUsername] = useState('');

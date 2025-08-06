@@ -1,15 +1,17 @@
 import { useToast } from '@/context/ToastContext';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout';
+import { PageProps } from '@/types';
 import { Event, EventUser, Score } from '@/types/types';
-import { router } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
-interface PageProps {
+interface Props {
     eventUsers: EventUser[];
 }
 
-const judge = ({ eventUsers }: PageProps) => {
+const judge = ({ eventUsers }: Props) => {
     const { showToast } = useToast();
+    const { user } = usePage<PageProps>().props.auth;
 
     const [activeEvent, setActiveEvent] = useState<Event | undefined>(eventUsers[0].event);
     const [activeScores, setActiveScores] = useState(eventUsers[0].event?.scores);
@@ -63,8 +65,8 @@ const judge = ({ eventUsers }: PageProps) => {
     };
 
     // useEffect(() => {
-    //     console.log(eventUsers);
-    // }, [eventUsers]);
+    //     console.log(user);
+    // }, [user]);
 
     return (
         <AuthenticatedLayout className="p-4">
@@ -84,7 +86,6 @@ const judge = ({ eventUsers }: PageProps) => {
                     </button>
                 ))}
             </div>
-
             <div className="my-4 p-4 text-center text-4xl font-bold uppercase">{activeEvent?.name}</div>
 
             <div className="overflow-x-auto bg-base-100 shadow-sm">
@@ -98,40 +99,63 @@ const judge = ({ eventUsers }: PageProps) => {
                                     {criterion.name} ({criterion.weight})
                                 </th>
                             ))}
+                            <th className="text-center">Average</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {activeContestants?.map((contestant, index) => (
-                            <tr key={index}>
-                                <th className="w-1/4 text-center">{contestant.name}</th>
-                                {activeCriteria?.map((criterion, index) => {
-                                    let scoreId = activeScores?.find(
-                                        (score) => score.criterion_id === criterion.id && contestant.id === score.contestant_id,
-                                    )?.id;
-                                    let score =
-                                        activeScores?.find((score) => score.criterion_id === criterion.id && contestant.id === score.contestant_id)
-                                            ?.score ?? 0;
+                        {activeContestants?.map((contestant, index) => {
+                            let contestantScores = activeScores?.filter((score) => score.contestant_id === contestant.id);
 
-                                    return (
-                                        <th key={index} className="w-1/4 text-center">
-                                            <input
-                                                type="number"
-                                                className="input max-w-32 text-center"
-                                                value={score > 0 ? score : ''}
-                                                onChange={(e) => {
-                                                    const val = e.target.value;
-                                                    handleScoreChange(scoreId!, val === '' ? null : parseFloat(val));
-                                                }}
-                                            />
-                                        </th>
-                                    );
-                                })}
-                            </tr>
-                        ))}
+                            return (
+                                <tr key={index}>
+                                    <th className={`w-1/4 text-center`}>{contestant.name}</th>
+                                    {activeCriteria?.map((criterion, index) => {
+                                        let scoreId = activeScores?.find(
+                                            (score) => score.criterion_id === criterion.id && contestant.id === score.contestant_id,
+                                        )?.id;
+                                        let score =
+                                            activeScores?.find(
+                                                (score) => score.criterion_id === criterion.id && contestant.id === score.contestant_id,
+                                            )?.score ?? 0;
+
+                                        return (
+                                            <th key={index} className={`w-1/4 text-center ${index % 2 === 0 && 'bg-base-200/90'}`}>
+                                                <input
+                                                    type="number"
+                                                    className="input max-w-32 text-center"
+                                                    value={score > 0 ? score : ''}
+                                                    onChange={(e) => {
+                                                        const val = e.target.value;
+                                                        handleScoreChange(scoreId!, val === '' ? null : parseFloat(val));
+                                                    }}
+                                                />
+                                            </th>
+                                        );
+                                    })}
+                                    <th className="w-1/4 text-center">
+                                        {(() => {
+                                            if (!activeCriteria || !contestantScores) return 0;
+
+                                            // Calculate weighted sum
+                                            const total = activeCriteria.reduce((sum, criterion) => {
+                                                const score =
+                                                    contestantScores.find((s) => s.criterion_id === criterion.id && s.contestant_id === contestant.id)
+                                                        ?.score ?? 0;
+
+                                                // Weight: assume criterion.weight is in %
+                                                return sum + score * (criterion.weight / 100);
+                                            }, 0);
+
+                                            return total.toFixed(2); // Show 2 decimal places
+                                        })()}
+                                    </th>
+                                </tr>
+                            );
+                        })}
                     </tbody>
                 </table>
-                <div className="divider"></div>
-                <div className="px-4 pb-5 text-end">
+                <div className="flex items-center justify-between border-t border-base-300 p-4">
+                    <div className="ml-8 font-bold text-base-content/75 uppercase">Judged by: {user.name}</div>
                     <button
                         className="btn btn-wide btn-success"
                         disabled={!scoresChanged(activeScores ?? [], prevScores ?? [])}
