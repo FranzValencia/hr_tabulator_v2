@@ -10,7 +10,7 @@ export interface User {
     username: string;
     plain_password: string;
     role: 'administrator' | 'judge';
-    scoresGiven?: Score[];
+    scores_given?: Score[];
     created_at: string;
     updated_at: string;
 }

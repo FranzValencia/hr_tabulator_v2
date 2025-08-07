@@ -5,6 +5,7 @@ import CategoricalWinnersComponents from './_components/CategoricalWinnersCompon
 import ContestantsComponent from './_components/ContestantsComponent';
 import JudgesComponent from './_components/JudgesComponent';
 import OverallRankingComponent from './_components/OverallRankingComponent';
+import TotalScoreSheetComponent from './_components/TotalScoreSheetComponent';
 
 interface Props {
     event: Event;
@@ -24,6 +25,7 @@ const admin = ({ event, judges_to_choose_from }: Props) => {
                     <div className="card-body">
                         <OverallRankingComponent event={event} />
                         <CategoricalWinnersComponents event={event} />
+                        <TotalScoreSheetComponent event={event} />
                     </div>
                 </div>
             </div>

@@ -54,7 +54,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->whereNot('username', 'admin')
             ->get();
 
-        $event = Event::with('criteria')->with('judges')->with('contestants.scores')->findOrFail($id);
+        $event = Event::with([
+            'criteria',
+            'judges.scoresGiven',
+            'contestants.scores'
+        ])->findOrFail($id);
 
         return Inertia::render('admin', [
             'judges_to_choose_from' => $judges,

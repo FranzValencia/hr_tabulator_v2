@@ -22,6 +22,7 @@ export interface EventUser {
     event?: Event;
     criteria?: Criterion[];
     status: 'active' | 'in-active';
+    // event?: Event;
 }
 
 export interface Contestant {

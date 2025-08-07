@@ -8,27 +8,23 @@ const OverallRankingComponent = ({ event }: { event: Event }) => {
     const rankedContestants = useMemo(() => {
         if (!contestants.length || !event.criteria?.length) return [];
 
-        return contestants
-            .map((contestant) => {
-                // Compute overall weighted score
-                const totalWeightedScore = event.criteria!.reduce((total, criterion) => {
-                    // Get all scores for this criterion from this contestant
-                    const scoresForCriterion = contestant.scores?.filter((s) => s.criterion_id === criterion.id) ?? [];
+        return contestants.map((contestant) => {
+            // Compute overall weighted score
+            const totalWeightedScore = event.criteria!.reduce((total, criterion) => {
+                // Get all scores for this criterion from this contestant
+                const scoresForCriterion = contestant.scores?.filter((s) => s.criterion_id === criterion.id) ?? [];
 
-                    const avgScore =
-                        scoresForCriterion.length > 0
-                            ? scoresForCriterion.reduce((sum, s) => sum + (s.score ?? 0), 0) / scoresForCriterion.length
-                            : 0;
+                const avgScore =
+                    scoresForCriterion.length > 0 ? scoresForCriterion.reduce((sum, s) => sum + (s.score ?? 0), 0) / scoresForCriterion.length : 0;
 
-                    // Weighted score
-                    const weightedScore = avgScore * (criterion.weight / 100);
+                // Weighted score
+                const weightedScore = avgScore * (criterion.weight / 100);
 
-                    return total + weightedScore;
-                }, 0);
+                return total + weightedScore;
+            }, 0);
 
-                return { contestant, score: totalWeightedScore };
-            })
-            .sort((a, b) => b.score - a.score); // Highest first
+            return { contestant, score: totalWeightedScore };
+        });
     }, [contestants, event.criteria]);
 
     return (

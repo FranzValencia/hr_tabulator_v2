@@ -53,7 +53,20 @@ class User extends Authenticatable
 
     public function scoresGiven()
     {
-        return $this->hasMany(Score::class, 'judge_id');
+        return $this->hasManyThrough(
+            Score::class,
+            EventUser::class,
+            'user_id',
+            'event_user_id',
+            'id',
+            'id'
+        );
     }
+
+    public function eventUsers()
+    {
+        return $this->hasMany(EventUser::class);
+    }
+
 
 }

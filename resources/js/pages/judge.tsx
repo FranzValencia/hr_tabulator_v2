@@ -89,7 +89,7 @@ const judge = ({ eventUsers }: Props) => {
             <div className="my-4 p-4 text-center text-4xl font-bold uppercase">{activeEvent?.name}</div>
 
             <div className="overflow-x-auto bg-base-100 shadow-sm">
-                <table className="table">
+                <table className="table w-full table-fixed">
                     {/* head */}
                     <thead className="bg-base-200">
                         <tr>
@@ -108,7 +108,7 @@ const judge = ({ eventUsers }: Props) => {
 
                             return (
                                 <tr key={index}>
-                                    <th className={`w-1/4 text-center`}>{contestant.name}</th>
+                                    <th className={`text-center`}>{contestant.name}</th>
                                     {activeCriteria?.map((criterion, index) => {
                                         let scoreId = activeScores?.find(
                                             (score) => score.criterion_id === criterion.id && contestant.id === score.contestant_id,
@@ -119,7 +119,7 @@ const judge = ({ eventUsers }: Props) => {
                                             )?.score ?? 0;
 
                                         return (
-                                            <th key={index} className={`w-1/4 text-center ${index % 2 === 0 && 'bg-base-200/90'}`}>
+                                            <th key={index} className={`text-center ${index % 2 === 0 && 'bg-base-200/90'}`}>
                                                 <input
                                                     type="number"
                                                     className="input max-w-32 text-center"
@@ -132,7 +132,7 @@ const judge = ({ eventUsers }: Props) => {
                                             </th>
                                         );
                                     })}
-                                    <th className="w-1/4 text-center">
+                                    <th className="text-center">
                                         {(() => {
                                             if (!activeCriteria || !contestantScores) return 0;
 
