@@ -22,7 +22,7 @@ const admin = ({ event, judges_to_choose_from }: Props) => {
             <div className="flex w-full justify-center overflow-auto p-8">
                 <div className="card h-fit w-full bg-base-100 shadow-sm card-md">
                     <div className="card-body">
-                        <OverallRankingComponent />
+                        <OverallRankingComponent event={event} />
                         <CategoricalWinnersComponents event={event} />
                     </div>
                 </div>
