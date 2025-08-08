@@ -56,8 +56,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         $event = Event::with([
             'criteria',
-            'judges.scoresGiven',
-            'contestants.scores'
+            'judges.eventUsers',           // So you can match event_user_id in scores
+            'judges.scoresGiven',          // Optional, if you want full score data
+            'contestants.scores.criterion' // Load scores and their criteria
         ])->findOrFail($id);
 
         return Inertia::render('admin', [

@@ -19,6 +19,12 @@ class Score extends Model
         return $this->belongsTo(Event::class);
     }
 
+    public function eventUser()
+    {
+        return $this->belongsTo(EventUser::class, 'event_user_id');
+    }
+
+
     public function judge()
     {
         return $this->belongsTo(User::class);

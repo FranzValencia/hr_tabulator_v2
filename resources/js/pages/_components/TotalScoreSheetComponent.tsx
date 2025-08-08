@@ -2,23 +2,20 @@ import { User } from '@/types';
 import { Contestant, Criterion, Event, Score } from '@/types/types';
 import { useState } from 'react';
 
-const TotalScoreSheetComponent = ({ event }: { event: Event }) => {
+const TotalScoreSheetComponent = ({ event, pointBased }: { event: Event; pointBased: boolean }) => {
     const [eventCriteria] = useState<Criterion[]>(event.criteria ?? []);
     const [eventJudges] = useState<User[]>(event.judges ?? []);
     const [eventContestants] = useState<Contestant[]>(event.contestants ?? []);
     const [showJudgeNames] = useState(false);
     const maxScore = 100;
 
-    // Create a lookup for scores: criterionId + judgeId -> score
     const getWeightedScore = (criterion: Criterion | undefined, score: Score, maxScore: number): number => {
         if (!criterion || !score.score || maxScore === 0) return 0;
-
-        const normalized = score.score / maxScore; // Convert score to a value between 0 and 1
-        const weightedScore = normalized * criterion.weight;
-
-        return weightedScore;
+        const normalized = score.score / maxScore;
+        return normalized * criterion.weight;
     };
 
+    // Step 1: Compute point-based scores for sorting
     const contestantScores = eventContestants.map((contestant) => {
         const judgeScores = eventJudges.map((judge) => {
             const total =
@@ -28,7 +25,6 @@ const TotalScoreSheetComponent = ({ event }: { event: Event }) => {
                         const criterion = eventCriteria.find((c) => c.id === score.criterion_id);
                         return sum + getWeightedScore(criterion, score, maxScore);
                     }, 0) ?? 0;
-
             return total;
         });
 
@@ -41,13 +37,83 @@ const TotalScoreSheetComponent = ({ event }: { event: Event }) => {
         };
     });
 
-    // 2. Sort by average score (descending) and assign rank
-    const rankedContestants = contestantScores
+    // Step 2: Sort by point-based average scores regardless of mode
+    const sortedByPointScore = contestantScores
         .sort((a, b) => b.averageScore - a.averageScore)
         .map((entry, index) => ({
             ...entry,
-            rank: index + 1,
+            finalRank: index + 1,
         }));
+
+    // Step 3: For rank-based mode, compute judge-wise rankings
+    const judgeRanks: Record<number, { contestantId: number; rank: number }[]> = {};
+
+    const rankWithTies = (entries: { contestantId: number; total: number }[]) => {
+        const sorted = [...entries].sort((a, b) => b.total - a.total);
+        let ranks: { contestantId: number; rank: number }[] = [];
+        let currentRank = 1;
+
+        for (let i = 0; i < sorted.length; i++) {
+            if (i > 0 && sorted[i].total === sorted[i - 1].total) {
+                ranks.push({ ...sorted[i], rank: ranks[i - 1].rank });
+            } else {
+                ranks.push({ ...sorted[i], rank: currentRank });
+            }
+            currentRank++;
+        }
+
+        return ranks;
+    };
+
+    if (!pointBased) {
+        eventJudges.forEach((judge) => {
+            const scores = eventContestants.map((contestant) => {
+                const total =
+                    judge.scores_given
+                        ?.filter((score) => score.contestant_id === contestant.id)
+                        .reduce((sum, score) => {
+                            const criterion = eventCriteria.find((c) => c.id === score.criterion_id);
+                            return sum + getWeightedScore(criterion, score, maxScore);
+                        }, 0) ?? 0;
+
+                return { contestantId: contestant.id, total };
+            });
+
+            judgeRanks[judge.id] = rankWithTies(scores);
+        });
+    }
+
+    // Step 4: Prepare final data for UI rendering
+    const finalDisplay = sortedByPointScore.map((entry) => {
+        let displayJudgeScores: (number | string)[] = [];
+
+        if (pointBased) {
+            displayJudgeScores = entry.judgeScores.map((score) => score.toFixed(2));
+        } else {
+            displayJudgeScores = eventJudges.map((judge) => {
+                const rankEntry = judgeRanks[judge.id]?.find((r) => r.contestantId === entry.contestant.id);
+                return rankEntry ? `#${rankEntry.rank}` : '#-';
+            });
+        }
+
+        const totalRank = !pointBased
+            ? displayJudgeScores.reduce((sum: number, val) => {
+                  if (typeof val === 'string') {
+                      const num = parseInt(val.replace('#', '')) || 0;
+                      return sum + num;
+                  }
+                  return sum + val;
+              }, 0)
+            : 0;
+
+        return {
+            contestant: entry.contestant,
+            judgeDisplay: displayJudgeScores,
+            averageScore: entry.averageScore,
+            totalRank,
+            finalRank: entry.finalRank,
+        };
+    });
 
     return (
         <div>
@@ -56,33 +122,30 @@ const TotalScoreSheetComponent = ({ event }: { event: Event }) => {
                 <table className="table table-fixed table-sm">
                     <thead>
                         <tr>
-                            <th>Criteria</th>
+                            <th>Contestant</th>
                             {eventJudges.map((judge, index) => (
                                 <th className="text-center" key={judge.id}>
                                     {showJudgeNames ? judge.name : `Judge ${index + 1}`}
                                 </th>
                             ))}
-                            <th className="text-center">Total</th>
-                            <th className="text-center">Rank</th>
+                            <th className="text-center">{pointBased ? 'Average Score' : 'Total Rank'}</th>
+                            <th className="text-center">Final Rank</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {rankedContestants.map(({ contestant, judgeScores, averageScore, rank }) => (
+                        {finalDisplay.map(({ contestant, judgeDisplay, averageScore, totalRank, finalRank }) => (
                             <tr key={contestant.id}>
                                 <td>{contestant.name}</td>
 
-                                {/* Each judge's total weighted score for this contestant */}
-                                {judgeScores.map((score, index) => (
+                                {judgeDisplay.map((val, index) => (
                                     <td className="text-center" key={index}>
-                                        {score.toFixed(2)}
+                                        {val}
                                     </td>
                                 ))}
 
-                                {/* Total average column */}
-                                <td className="text-center font-bold">{averageScore.toFixed(2)}</td>
+                                <td className="text-center font-bold">{pointBased ? averageScore.toFixed(2) : totalRank}</td>
 
-                                {/* Rank column */}
-                                <td className="text-center font-bold">{rank}</td>
+                                <td className="text-center font-bold">{finalRank}</td>
                             </tr>
                         ))}
                     </tbody>
