@@ -6,9 +6,9 @@ const AuthenticatedLayout = ({ children, className }: { children: ReactNode; cla
     return (
         <div>
             <div
-                className={`flex h-[64px] w-full ${route().current('home') ? 'justify-end' : 'justify-between'} items-center bg-base-200 px-8 shadow`}
+                className={`flex h-[64px] w-full ${route().current('home') || route().current('judge') ? 'justify-end' : 'justify-between'} items-center bg-base-200 px-8 shadow`}
             >
-                {!route().current('home') && (
+                {!route().current('home') && !route().current('judge') && (
                     <button
                         className="btn btn-sm btn-neutral"
                         onClick={() => {

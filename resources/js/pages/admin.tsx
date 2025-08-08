@@ -1,10 +1,10 @@
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout';
 import { User } from '@/types';
 import { Event } from '@/types/types';
+import { useState } from 'react';
 import CategoricalWinnersComponents from './_components/CategoricalWinnersComponents';
 import ContestantsComponent from './_components/ContestantsComponent';
 import JudgesComponent from './_components/JudgesComponent';
-import OverallRankingComponent from './_components/OverallRankingComponent';
 import TotalScoreSheetComponent from './_components/TotalScoreSheetComponent';
 
 interface Props {
@@ -13,6 +13,8 @@ interface Props {
 }
 
 const admin = ({ event, judges_to_choose_from }: Props) => {
+    const [pointSystem, setPointSystem] = useState(false);
+
     return (
         <AuthenticatedLayout className="flex">
             <div className="w-full max-w-md overflow-auto bg-base-200 p-4 shadow-lg">
@@ -23,9 +25,9 @@ const admin = ({ event, judges_to_choose_from }: Props) => {
             <div className="flex w-full justify-center overflow-auto p-8">
                 <div className="card h-fit w-full bg-base-100 shadow-sm card-md">
                     <div className="card-body">
-                        <OverallRankingComponent event={event} />
-                        <CategoricalWinnersComponents event={event} />
                         <TotalScoreSheetComponent event={event} />
+                        {/* <OverallRankingComponent event={event} /> */}
+                        <CategoricalWinnersComponents event={event} />
                     </div>
                 </div>
             </div>

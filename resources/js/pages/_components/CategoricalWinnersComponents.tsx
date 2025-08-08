@@ -1,13 +1,9 @@
 import { Contestant, Criterion, Event } from '@/types/types';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 const CategoricalWinnersComponents = ({ event }: { event: Event }) => {
     const [activeCriteria, setActiveCriteria] = useState<Criterion[]>(event.criteria ?? []);
     const [activeContestants, setActiveContestants] = useState<Contestant[]>(event.contestants ?? []);
-
-    useEffect(() => {
-        console.log(event);
-    }, [event]);
 
     const getCriterionWinner = (criterion: Criterion) => {
         if (!activeContestants.length) return null;
