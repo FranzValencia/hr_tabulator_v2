@@ -13,7 +13,7 @@ interface Props {
 }
 
 const admin = ({ event, judges_to_choose_from }: Props) => {
-    const [pointSystem, setPointSystem] = useState(false);
+    const [pointBased, setPointBased] = useState(false);
 
     return (
         <AuthenticatedLayout className="flex">
@@ -22,12 +22,22 @@ const admin = ({ event, judges_to_choose_from }: Props) => {
                 <div className="divider" />
                 <ContestantsComponent event={event} />
             </div>
-            <div className="flex w-full justify-center overflow-auto p-8">
+            <div className="flex w-full flex-col justify-center overflow-auto p-8">
+                <div className="mb-2 flex items-center gap-2">
+                    <fieldset className="fieldset w-fit rounded-box border border-base-300 bg-base-100 p-4">
+                        <label className="label">
+                            <input type="checkbox" checked={pointBased} onChange={(e) => setPointBased(!pointBased)} className="toggle" />
+                            Point based
+                        </label>
+                    </fieldset>
+                    <button className="btn btn-success">Print</button>
+                </div>
                 <div className="card h-fit w-full bg-base-100 shadow-sm card-md">
                     <div className="card-body">
-                        <TotalScoreSheetComponent event={event} />
-                        {/* <OverallRankingComponent event={event} /> */}
-                        <CategoricalWinnersComponents event={event} />
+                        <div className="flex flex-col gap-8 p-8">
+                            <TotalScoreSheetComponent event={event} />
+                            <CategoricalWinnersComponents event={event} />
+                        </div>
                     </div>
                 </div>
             </div>

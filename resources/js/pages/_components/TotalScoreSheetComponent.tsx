@@ -50,45 +50,43 @@ const TotalScoreSheetComponent = ({ event }: { event: Event }) => {
         }));
 
     return (
-        <div className="card mt-4 h-fit w-full bg-base-100 shadow-sm card-md">
-            <div className="card-body">
-                <h2 className="card-title text-xl font-bold uppercase">Final Scoresheet</h2>
-                <div className="overflow-x-auto">
-                    <table className="table table-fixed table-sm">
-                        <thead>
-                            <tr>
-                                <th>Criteria</th>
-                                {eventJudges.map((judge, index) => (
-                                    <th className="text-center" key={judge.id}>
-                                        {showJudgeNames ? judge.name : `Judge ${index + 1}`}
-                                    </th>
-                                ))}
-                                <th className="text-center">Total</th>
-                                <th className="text-center">Rank</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {rankedContestants.map(({ contestant, judgeScores, averageScore, rank }) => (
-                                <tr key={contestant.id}>
-                                    <td>{contestant.name}</td>
-
-                                    {/* Each judge's total weighted score for this contestant */}
-                                    {judgeScores.map((score, index) => (
-                                        <td className="text-center" key={index}>
-                                            {score.toFixed(2)}
-                                        </td>
-                                    ))}
-
-                                    {/* Total average column */}
-                                    <td className="text-center font-bold">{averageScore.toFixed(2)}</td>
-
-                                    {/* Rank column */}
-                                    <td className="text-center font-bold">{rank}</td>
-                                </tr>
+        <div>
+            <h2 className="card-title text-xl font-bold uppercase">Final Scoresheet</h2>
+            <div className="overflow-x-auto">
+                <table className="table table-fixed table-sm">
+                    <thead>
+                        <tr>
+                            <th>Criteria</th>
+                            {eventJudges.map((judge, index) => (
+                                <th className="text-center" key={judge.id}>
+                                    {showJudgeNames ? judge.name : `Judge ${index + 1}`}
+                                </th>
                             ))}
-                        </tbody>
-                    </table>
-                </div>
+                            <th className="text-center">Total</th>
+                            <th className="text-center">Rank</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {rankedContestants.map(({ contestant, judgeScores, averageScore, rank }) => (
+                            <tr key={contestant.id}>
+                                <td>{contestant.name}</td>
+
+                                {/* Each judge's total weighted score for this contestant */}
+                                {judgeScores.map((score, index) => (
+                                    <td className="text-center" key={index}>
+                                        {score.toFixed(2)}
+                                    </td>
+                                ))}
+
+                                {/* Total average column */}
+                                <td className="text-center font-bold">{averageScore.toFixed(2)}</td>
+
+                                {/* Rank column */}
+                                <td className="text-center font-bold">{rank}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
         </div>
     );
