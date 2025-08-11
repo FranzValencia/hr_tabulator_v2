@@ -5,6 +5,7 @@ import { useState } from 'react';
 import CategoricalWinnersComponents from './_components/CategoricalWinnersComponents';
 import ContestantsComponent from './_components/ContestantsComponent';
 import JudgesComponent from './_components/JudgesComponent';
+import JudgeScoresheet from './_components/JudgeScoresheet';
 import TotalScoreSheetComponent from './_components/TotalScoreSheetComponent';
 
 interface Props {
@@ -30,14 +31,14 @@ const admin = ({ event, judges_to_choose_from }: Props) => {
                     <fieldset className="fieldset w-fit rounded-box border border-base-300 bg-base-100 p-4">
                         <label className="label cursor-pointer gap-2">
                             <input type="checkbox" checked={pointBased} onChange={() => setPointBased(!pointBased)} className="toggle" />
-                            <span className="label-text">Point based</span>
+                            <span className="label-text">{pointBased ? 'Point' : 'Rank'} based</span>
                         </label>
                     </fieldset>
                     <button className="btn btn-success">Print</button>
                 </div>
 
                 {/* Scrollable Content */}
-                <div className="flex-1 overflow-y-auto p-8">
+                <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-8">
                     <div className="card h-fit w-full bg-base-100 shadow-sm card-md">
                         <div className="card-body">
                             <div className="flex flex-col gap-8 p-8">
@@ -46,6 +47,23 @@ const admin = ({ event, judges_to_choose_from }: Props) => {
                             </div>
                         </div>
                     </div>
+
+                    {event.judges?.map((judge, index) => (
+                        <div className="card h-fit w-full bg-base-100 shadow-sm card-md" key={index}>
+                            <div className="card-body">
+                                <div className="flex flex-col gap-8 p-8">
+                                    <TotalScoreSheetComponent event={event} pointBased={pointBased} />
+                                    <JudgeScoresheet
+                                        key={index}
+                                        judge={judge}
+                                        criteria={event.criteria ?? []}
+                                        contestants={event.contestants ?? []}
+                                        pointBased={pointBased}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </div>
         </AuthenticatedLayout>

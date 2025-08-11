@@ -11,23 +11,23 @@ type RankedResult = {
     finalRank: number;
 };
 
+// Calculate weighted average score for a list of scores based on criteria weights
+export const getAverage = (scores: Score[], criteria: Criterion[]) => {
+    const totalCriteriaWeight = 100;
+
+    return (
+        scores.reduce((acc, score) => {
+            const weight = criteria.find((c) => c.id === score.criterion_id)?.weight ?? 0;
+            return acc + ((score.score ?? 0) * weight) / totalCriteriaWeight;
+        }, 0) || 0
+    );
+};
+
 const TotalScoreSheetComponent = ({ event, pointBased }: { event: Event; pointBased: boolean }) => {
     const [eventCriteria] = useState<Criterion[]>(event.criteria ?? []);
     const [eventJudges] = useState<User[]>(event.judges ?? []);
     const [eventContestants] = useState<Contestant[]>(event.contestants ?? []);
     const [showJudgeNames] = useState(false);
-
-    const totalCriteriaWeight = 100;
-
-    // Calculate weighted average score for a list of scores based on criteria weights
-    const getAverage = (scores: Score[], criteria: Criterion[]) => {
-        return (
-            scores.reduce((acc, score) => {
-                const weight = criteria.find((c) => c.id === score.criterion_id)?.weight ?? 0;
-                return acc + ((score.score ?? 0) * weight) / totalCriteriaWeight;
-            }, 0) || 0
-        );
-    };
 
     // Calculate point-based results: average scores + final rank by average
     const pointBasedResults: Omit<RankedResult, 'finalRank'>[] = useMemo(() => {
