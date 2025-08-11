@@ -28,7 +28,7 @@ const CategoricalWinnersComponents = ({ event }: { event: Event }) => {
     return (
         <div>
             <h2 className="mb-4 card-title text-xl font-bold uppercase">Categorical Winners</h2>
-            <div className="overflow-x-auto">
+            <div className="overflow-auto">
                 <table className="table table-zebra">
                     <thead>
                         <tr className="text-sm font-bold uppercase">

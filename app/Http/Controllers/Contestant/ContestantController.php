@@ -32,6 +32,7 @@ class ContestantController extends Controller
                     'event_user_id' => $judge->id,
                     'contestant_id' => $contestant->id,
                     'criterion_id' => $criterion->id,
+                    'judge_id' => $judge->user_id,
                 ]);
             }
         }

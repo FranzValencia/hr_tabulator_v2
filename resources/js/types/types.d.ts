@@ -39,6 +39,7 @@ export interface Score {
     event_user_id: number;
     contestant_id: number;
     criterion_id: number;
+    judge_id: number;
     score: number | null;
     event?: Event;
     judge?: User;

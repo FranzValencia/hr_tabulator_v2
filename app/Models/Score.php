@@ -11,7 +11,8 @@ class Score extends Model
         'event_user_id',
         'contestant_id',
         'criterion_id',
-        'score'
+        'judge_id',
+        'score',
     ];
 
     public function event()
