@@ -12,6 +12,7 @@ export interface Event {
     judges?: User[];
     scores?: Score[];
     contestants?: Contestant[];
+    special_awards?: SpecialAward[];
 }
 
 export interface EventUser {
@@ -31,6 +32,7 @@ export interface Contestant {
     name: string;
     event?: Event;
     scores?: Score[];
+    special_awards?: SpecialAward[];
 }
 
 export interface Score {
@@ -45,4 +47,15 @@ export interface Score {
     judge?: User;
     contestant?: Contestant;
     criterion?: Criterion;
+}
+
+export interface SpecialAward {
+    id: number;
+    title: string;
+    description: string | null;
+    event_id: number;
+    contestant_id: number;
+    status: 'active' | 'in-active';
+    contestant?: Contestant;
+    event?: Event;
 }

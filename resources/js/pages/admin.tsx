@@ -1,6 +1,7 @@
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout';
 import { User } from '@/types';
 import { Event } from '@/types/types';
+import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import CategoricalWinnersComponents from './_components/CategoricalWinnersComponents';
 import ContestantsComponent from './_components/ContestantsComponent';
@@ -27,13 +28,18 @@ const admin = ({ event, judges_to_choose_from }: Props) => {
 
             <div className="flex h-full w-full flex-col">
                 {/* Fixed Top Controls */}
-                <div className="mb-2 flex items-center gap-2 border-b border-base-300 bg-base-100 p-4">
-                    <fieldset className="fieldset w-fit rounded-box border border-base-300 bg-base-100 p-4">
-                        <label className="label cursor-pointer gap-2">
-                            <input type="checkbox" checked={pointBased} onChange={() => setPointBased(!pointBased)} className="toggle" />
-                            <span className="label-text">{pointBased ? 'Point' : 'Rank'} based</span>
-                        </label>
-                    </fieldset>
+                <div className="mb-2 flex items-center justify-between gap-2 border-b border-base-300 bg-base-100 p-4">
+                    <div className="flex items-center gap-2">
+                        <fieldset className="fieldset w-fit rounded-box border border-base-300 bg-base-100 p-4">
+                            <label className="label cursor-pointer gap-2">
+                                <input type="checkbox" checked={pointBased} onChange={() => setPointBased(!pointBased)} className="toggle" />
+                                <span className="label-text">{pointBased ? 'Point' : 'Rank'} based</span>
+                            </label>
+                        </fieldset>
+                        <button className="btn bg-base-200">
+                            Add award <Plus size={14} />{' '}
+                        </button>
+                    </div>
                     <button className="btn btn-success">Print</button>
                 </div>
 

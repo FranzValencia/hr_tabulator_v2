@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Contestant extends Model
 {
@@ -25,5 +26,9 @@ class Contestant extends Model
     {
         return $this->hasMany(Score::class);
     }
-
+    
+    public function specialAwards(): HasMany    
+    {
+        return $this->hasMany(SpecialAward::class);
+    }
 }
