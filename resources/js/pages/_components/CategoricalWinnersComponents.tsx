@@ -4,25 +4,45 @@ import { useState } from 'react';
 
 const EPSILON = 0.0001;
 
-const CategoricalWinnersComponents = ({ event }: { event: Event }) => {
+const CategoricalWinnersComponents = ({ event, pointBased }: { event: Event; pointBased: boolean }) => {
     const [activeCriteria, setActiveCriteria] = useState<Criterion[]>(event.criteria ?? []);
     const [activeContestants, setActiveContestants] = useState<Contestant[]>(event.contestants ?? []);
 
     const getCriterionWinners = (criterion: Criterion) => {
         if (!activeContestants.length) return [];
 
-        let maxScore = 0;
+        // Calculate avg score per contestant for this criterion
         const scoredContestants = activeContestants.map((contestant) => {
             const scoresForCriterion = contestant.scores?.filter((s) => s.criterion_id === criterion.id) ?? [];
             const avgScore =
                 scoresForCriterion.length > 0 ? scoresForCriterion.reduce((sum, s) => sum + (s.score ?? 0), 0) / scoresForCriterion.length : 0;
             const weightedScore = avgScore * (criterion.weight / 100);
-            if (weightedScore > maxScore) maxScore = weightedScore;
 
-            return { contestant, weightedScore, avgScore, scores: scoresForCriterion };
+            return { contestant, avgScore, weightedScore, scores: scoresForCriterion };
         });
 
-        return scoredContestants.filter(({ weightedScore }) => Math.abs(weightedScore - maxScore) < EPSILON);
+        if (pointBased) {
+            // POINT-BASED: highest weighted score wins
+            let maxScore = Math.max(...scoredContestants.map((c) => c.weightedScore));
+            return scoredContestants.filter(({ weightedScore }) => Math.abs(weightedScore - maxScore) < EPSILON);
+        } else {
+            // RANK-BASED: assign ranks by avgScore (highest score gets rank 1)
+            const sorted = [...scoredContestants].sort((a, b) => b.avgScore - a.avgScore);
+            let currentRank = 1;
+            let prevScore: number | null = null;
+
+            sorted.forEach((item, index) => {
+                if (prevScore !== null && Math.abs(item.avgScore - prevScore) > EPSILON) {
+                    currentRank = index + 1; // next rank
+                }
+                (item as any).rank = currentRank;
+                prevScore = item.avgScore;
+            });
+
+            // Find lowest rank
+            const minRank = Math.min(...sorted.map((c: any) => c.rank));
+            return sorted.filter((c: any) => c.rank === minRank);
+        }
     };
 
     return (
@@ -35,7 +55,8 @@ const CategoricalWinnersComponents = ({ event }: { event: Event }) => {
                             <th>Criterion</th>
                             <th>Judge Scores</th>
                             <th>Average</th>
-                            <th>Weighted Score</th>
+                            {!pointBased && <th>Rank</th>}
+                            {pointBased && <th>Weighted Score</th>}
                             <th>Winner(s)</th>
                         </tr>
                     </thead>
@@ -79,13 +100,18 @@ const CategoricalWinnersComponents = ({ event }: { event: Event }) => {
                                         <td>
                                             {winners.length > 0 ? winners[0].avgScore.toFixed(2) : <span className="text-gray-500 italic">-</span>}
                                         </td>
-                                        <td>
-                                            {winners.length > 0 ? (
-                                                winners[0].weightedScore.toFixed(2)
-                                            ) : (
-                                                <span className="text-gray-500 italic">-</span>
-                                            )}
-                                        </td>
+                                        {!pointBased && (
+                                            <td>{winners.length > 0 ? (winners as any)[0].rank : <span className="text-gray-500 italic">-</span>}</td>
+                                        )}
+                                        {pointBased && (
+                                            <td>
+                                                {winners.length > 0 ? (
+                                                    winners[0].weightedScore.toFixed(2)
+                                                ) : (
+                                                    <span className="text-gray-500 italic">-</span>
+                                                )}
+                                            </td>
+                                        )}
                                         <td>
                                             {winners.length > 0 ? (
                                                 <ul className="space-y-1 text-sm font-semibold text-primary">
@@ -102,13 +128,31 @@ const CategoricalWinnersComponents = ({ event }: { event: Event }) => {
                             })
                         ) : (
                             <tr>
-                                <td colSpan={5} className="py-4 text-center text-gray-500 italic">
+                                <td colSpan={pointBased ? 5 : 6} className="py-4 text-center text-gray-500 italic">
                                     No criteria available
                                 </td>
                             </tr>
                         )}
                     </tbody>
                 </table>
+            </div>
+
+            {/* Footer Explanation */}
+            <div className="mt-4 text-sm text-gray-600 italic">
+                {pointBased ? (
+                    <>
+                        <span className="font-semibold">Point-Based Scoring:</span> For each criterion, the <em>average score</em> from all judges is
+                        multiplied by its
+                        <em> weight percentage</em> to determine the <em>weighted score</em>. The contestant with the{' '}
+                        <strong>highest total weighted score</strong> wins.
+                    </>
+                ) : (
+                    <>
+                        <span className="font-semibold">Rank-Based Scoring:</span> For each criterion, contestants are sorted by their{' '}
+                        <em>average score</em> from all judges. The highest average receives <strong>Rank&nbsp;1</strong>. Contestants with the same
+                        average score share the same rank. The <strong>lowest total rank</strong> across all criteria determines the winner.
+                    </>
+                )}
             </div>
         </div>
     );

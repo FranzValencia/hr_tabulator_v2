@@ -198,6 +198,21 @@ const JudgeScoresheet = ({
                     </tbody>
                 </table>
             </div>
+            {/* Explanation footer */}
+            <div className="mt-4 text-sm text-gray-600 italic">
+                {pointBased ? (
+                    <>
+                        Scores are computed using the <strong>Point-Based</strong> method. Each criterion score given by the judge is summed and
+                        averaged across all criteria. The contestant with the highest average score gets the top rank.
+                    </>
+                ) : (
+                    <>
+                        Scores are computed using the <strong>Rank-Based</strong> method. For each criterion, contestants are sorted by their score
+                        from highest to lowest. The highest score gets Rank 1. Contestants with the same score share the same rank, and total ranks
+                        across criteria are summed to determine the final ranking — the lowest total rank wins.
+                    </>
+                )}
+            </div>
         </div>
     );
 };

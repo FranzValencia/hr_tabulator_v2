@@ -191,6 +191,31 @@ const TotalScoreSheetComponent = ({ event, pointBased }: { event: Event; pointBa
                     </table>
                 </div>
             </div>
+            <div className="mt-4 text-sm text-gray-600 italic">
+                {pointBased ? (
+                    <>
+                        <span className="font-semibold">Point-Based Scoring:</span> Each judge scores contestants per criterion and applies the
+                        criterion’s weight to compute a weighted total score per judge. Then, the weighted total scores from all judges are averaged
+                        to get the contestant’s final average score. The contestant with the <strong>highest final average score</strong> wins.
+                        <br />
+                        <span className="text-gray-500">
+                            Example: Judge 1 gives a weighted total score of 86.00 and Judge 2 gives 90.50. The final average score is (86.00 + 90.50)
+                            ÷ 2 = 88.25.
+                        </span>
+                    </>
+                ) : (
+                    <>
+                        <span className="font-semibold">Rank-Based Scoring:</span> For each criterion, contestants are ranked based on their average
+                        scores from all judges. The highest average score receives <strong>Rank&nbsp;1</strong>. Contestants with the same average
+                        share the same rank. The contestant with the <strong>lowest sum of ranks</strong> across all criteria wins.
+                        <br />
+                        <span className="text-gray-500">
+                            Example: In one criterion, Alice gets Rank&nbsp;1, Bob Rank&nbsp;2, Charlie Rank&nbsp;3. In another criterion, Bob gets
+                            Rank&nbsp;1, Alice Rank&nbsp;2, Charlie Rank&nbsp;3. Their total ranks are summed to decide the winner.
+                        </span>
+                    </>
+                )}
+            </div>
         </div>
     );
 };

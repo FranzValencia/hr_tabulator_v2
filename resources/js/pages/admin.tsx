@@ -43,7 +43,7 @@ const admin = ({ event, judges_to_choose_from }: Props) => {
                         <div className="card-body">
                             <div className="flex flex-col gap-8 p-8">
                                 <TotalScoreSheetComponent event={event} pointBased={pointBased} />
-                                <CategoricalWinnersComponents event={event} />
+                                <CategoricalWinnersComponents event={event} pointBased={pointBased} />
                             </div>
                         </div>
                     </div>
@@ -53,6 +53,8 @@ const admin = ({ event, judges_to_choose_from }: Props) => {
                             <div className="card-body">
                                 <div className="flex flex-col gap-8 p-8">
                                     <TotalScoreSheetComponent event={event} pointBased={pointBased} />
+                                    <CategoricalWinnersComponents event={event} pointBased={pointBased} />
+                                    <div className="divider my-0"></div>
                                     <JudgeScoresheet
                                         key={index}
                                         judge={judge}
