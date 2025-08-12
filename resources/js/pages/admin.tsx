@@ -1,6 +1,8 @@
+import { useToast } from '@/context/ToastContext';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout';
 import { User } from '@/types';
-import { Event } from '@/types/types';
+import { Event, SpecialAward } from '@/types/types';
+import { router } from '@inertiajs/react';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import CategoricalWinnersComponents from './_components/CategoricalWinnersComponents';
@@ -16,6 +18,53 @@ interface Props {
 
 const admin = ({ event, judges_to_choose_from }: Props) => {
     const [pointBased, setPointBased] = useState(true);
+    const { showToast } = useToast();
+
+    // NEW AWARD STATES
+    const [specialAwards] = useState<SpecialAward[]>(event.special_awards ?? []);
+    const [awardTitle, setAwardTitle] = useState('');
+    const [awardDescription, setAwardDescription] = useState('');
+    const [awardAwardee, setAwardAwardee] = useState<number | null>(null);
+
+    const handleAwardeeSelection = (id: number) => {
+        setAwardAwardee((prevId) => (prevId === id ? null : id));
+    };
+
+    const openNewAwardModal = () => {
+        const modal = document.getElementById('newAwardModal') as HTMLDialogElement | null;
+        if (modal) {
+            modal.showModal();
+        }
+    };
+
+    const closeNewAwardModal = () => {
+        const modal = document.getElementById('newAwardModal') as HTMLDialogElement | null;
+        if (modal) {
+            modal.close();
+        }
+    };
+
+    const handleCreateAward = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        await router.post(
+            route('create.award', { award_title: awardTitle, award_description: awardDescription, event_id: event.id, contestant_id: awardAwardee }),
+            {},
+            {
+                onSuccess: () => {
+                    closeNewAwardModal();
+                    clearForm();
+                    showToast('Successfully added award!', 'success');
+                },
+            },
+        );
+    };
+
+    const clearForm = () => {
+        setAwardAwardee(null);
+        setAwardTitle('');
+        setAwardDescription('');
+    };
 
     return (
         <AuthenticatedLayout className="flex">
@@ -36,10 +85,11 @@ const admin = ({ event, judges_to_choose_from }: Props) => {
                                 <span className="label-text">{pointBased ? 'Point' : 'Rank'} based</span>
                             </label>
                         </fieldset>
-                        <button className="btn bg-base-200">
+                        <button className="btn bg-base-200" onClick={openNewAwardModal}>
                             Add award <Plus size={14} />{' '}
                         </button>
                     </div>
+
                     <button className="btn btn-success">Print</button>
                 </div>
 
@@ -62,6 +112,9 @@ const admin = ({ event, judges_to_choose_from }: Props) => {
                                     <div className="divider my-0"></div>
                                     <TotalScoreSheetComponent event={event} pointBased={pointBased} />
                                     <CategoricalWinnersComponents event={event} pointBased={pointBased} />
+                                    {specialAwards.map((award, index) => (
+                                        <div key={index}>{award.contestant?.name}</div>
+                                    ))}
                                     <JudgeScoresheet
                                         key={index}
                                         judge={judge}
@@ -76,6 +129,56 @@ const admin = ({ event, judges_to_choose_from }: Props) => {
                     ))}
                 </div>
             </div>
+            <dialog id="newAwardModal" className="modal">
+                <form onSubmit={(e) => handleCreateAward(e)} className="modal-box max-w-sm">
+                    <h3 className="text-lg font-bold">Special award</h3>
+                    <fieldset className="fieldset">
+                        <legend className="fieldset-legend">Award</legend>
+                        <input required type="text" className="input w-full" value={awardTitle} onChange={(e) => setAwardTitle(e.target.value)} />
+                    </fieldset>
+                    <fieldset className="fieldset">
+                        <legend className="fieldset-legend">Description</legend>
+                        <textarea
+                            className="textarea w-full"
+                            placeholder="( Optional )"
+                            value={awardDescription}
+                            onChange={(e) => setAwardDescription(e.target.value)}
+                            required
+                        ></textarea>
+                    </fieldset>
+                    <fieldset className="fieldset">
+                        <legend className="fieldset-legend">Select awardee</legend>
+                        {event.contestants?.map((contestant, index) => (
+                            <div
+                                key={index}
+                                className={`cursor-pointer rounded p-2 capitalize hover:bg-base-300 ${awardAwardee === contestant.id ? 'bg-base-300' : 'bg-base-300/50'}`}
+                                onClick={() => handleAwardeeSelection(contestant.id)}
+                            >
+                                {contestant.name}
+                            </div>
+                        ))}
+                    </fieldset>
+                    <div className="divider" />
+                    <div className="text-end">
+                        <button
+                            type="button"
+                            className="btn btn-ghost"
+                            onClick={() => {
+                                closeNewAwardModal();
+                                clearForm();
+                            }}
+                        >
+                            Cancel
+                        </button>
+                        <button className="btn btn-success" type="submit" disabled={!awardAwardee}>
+                            Save
+                        </button>
+                    </div>
+                </form>
+                <form method="dialog" className="modal-backdrop">
+                    <button>close</button>
+                </form>
+            </dialog>
         </AuthenticatedLayout>
     );
 };

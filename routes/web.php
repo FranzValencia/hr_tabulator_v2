@@ -58,7 +58,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'criteria',
             'judges.eventUsers',           // So you can match event_user_id in scores
             'judges.scoresGiven',          // Optional, if you want full score data
-            'contestants.scores.criterion' // Load scores and their criteria
+            'contestants.scores.criterion', // Load scores and their criteria
+            'specialAwards.contestant'
         ])->findOrFail($id);
 
         return Inertia::render('admin', [
@@ -78,6 +79,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/create-contestant', [ContestantController::class, 'create_contestant'])->name('create.contestant');
     Route::delete('/remove-contestant', [ContestantController::class, 'remove_contestant'])->name('remove.contestant');
 
+    // AWARD CONTROLLER
+    Route::post('/create-award', [EventController::class, 'create_award'])->name('create.award');
     
 });
 

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('description')->nullable();
             $table->foreignId('event_id')->constrained()->onDelete('cascade');
+            $table->foreignId('contestant_id')->constrained()->onDelete('cascade');
             $table->enum('status',['active','in-active'])->default('active');
             $table->timestamps();
         });

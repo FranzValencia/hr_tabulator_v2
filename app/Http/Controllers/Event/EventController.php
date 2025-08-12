@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Criterion;
 use App\Models\Event;
 use App\Models\Score;
+use App\Models\SpecialAward;
 use Illuminate\Http\Request;
 
 
@@ -57,5 +58,13 @@ class EventController extends Controller
     }
 
 
-   
+    public function create_award(Request $request)
+    {        
+        SpecialAward::create([
+            'title' => $request->input('award_title'),
+            'description' => $request->input('award_description'),
+            'event_id' => $request->input('event_id'),
+            'contestant_id' => $request->input('contestant_id'),
+        ]);
+    }
 }
