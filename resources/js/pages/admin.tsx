@@ -28,7 +28,7 @@ const admin = ({ event, judges_to_choose_from }: Props) => {
 
             <div className="flex h-full w-full flex-col">
                 {/* Fixed Top Controls */}
-                <div className="mb-2 flex items-center justify-between gap-2 border-b border-base-300 bg-base-100 p-4">
+                <div className="flex items-center justify-between gap-2 bg-base-100 p-4">
                     <div className="flex items-center gap-2">
                         <fieldset className="fieldset w-fit rounded-box border border-base-300 bg-base-100 p-4">
                             <label className="label cursor-pointer gap-2">
@@ -44,23 +44,24 @@ const admin = ({ event, judges_to_choose_from }: Props) => {
                 </div>
 
                 {/* Scrollable Content */}
-                <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-8">
-                    <div className="card h-fit w-full bg-base-100 shadow-sm card-md">
+                <div className="flex flex-1 flex-col gap-4 overflow-y-auto bg-base-100 p-8">
+                    <div className="card h-fit w-full card-xs">
                         <div className="card-body">
-                            <div className="flex flex-col gap-8 p-8">
+                            <div className="flex flex-col gap-8">
                                 <TotalScoreSheetComponent event={event} pointBased={pointBased} />
                                 <CategoricalWinnersComponents event={event} pointBased={pointBased} />
+                                <div className="divider my-0"></div>
                             </div>
                         </div>
                     </div>
 
                     {event.judges?.map((judge, index) => (
-                        <div className="card h-fit w-full bg-base-100 shadow-sm card-md" key={index}>
+                        <div className="card h-fit w-full card-xs" key={index}>
                             <div className="card-body">
-                                <div className="flex flex-col gap-8 p-8">
+                                <div className="flex flex-col gap-8">
+                                    <div className="divider my-0"></div>
                                     <TotalScoreSheetComponent event={event} pointBased={pointBased} />
                                     <CategoricalWinnersComponents event={event} pointBased={pointBased} />
-                                    <div className="divider my-0"></div>
                                     <JudgeScoresheet
                                         key={index}
                                         judge={judge}
@@ -68,6 +69,7 @@ const admin = ({ event, judges_to_choose_from }: Props) => {
                                         contestants={event.contestants ?? []}
                                         pointBased={pointBased}
                                     />
+                                    <div className="divider my-0"></div>
                                 </div>
                             </div>
                         </div>

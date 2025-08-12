@@ -191,7 +191,7 @@ const TotalScoreSheetComponent = ({ event, pointBased }: { event: Event; pointBa
                     </table>
                 </div>
             </div>
-            <div className="mt-4 text-sm text-gray-600 italic">
+            <div className="mt-4 text-xs text-gray-600 italic md:text-sm">
                 {pointBased ? (
                     <>
                         <span className="font-semibold">Point-Based Scoring:</span> Each judge scores contestants per criterion and applies the

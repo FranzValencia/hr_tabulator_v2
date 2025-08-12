@@ -49,7 +49,7 @@ const CategoricalWinnersComponents = ({ event, pointBased }: { event: Event; poi
         <div>
             <h2 className="mb-4 card-title text-xl font-bold uppercase">Categorical Winners</h2>
             <div className="overflow-auto">
-                <table className="table table-zebra">
+                <table className="table table-zebra table-xs md:table-md">
                     <thead>
                         <tr className="text-sm font-bold uppercase">
                             <th>Criterion</th>
@@ -73,7 +73,7 @@ const CategoricalWinnersComponents = ({ event, pointBased }: { event: Event; poi
 
                                         <td>
                                             {winners.length > 0 ? (
-                                                <ul className="space-y-3 text-sm">
+                                                <ul className="space-y-3 text-xs">
                                                     {winners.map(({ contestant, scores }, idx) => (
                                                         <li key={idx}>
                                                             <div className="font-medium">{contestant.name}:</div>
@@ -138,7 +138,7 @@ const CategoricalWinnersComponents = ({ event, pointBased }: { event: Event; poi
             </div>
 
             {/* Footer Explanation */}
-            <div className="mt-4 text-sm text-gray-600 italic">
+            <div className="mt-4 text-xs text-gray-600 italic md:text-sm">
                 {pointBased ? (
                     <>
                         <span className="font-semibold">Point-Based Scoring:</span> For each criterion, the <em>average score</em> from all judges is

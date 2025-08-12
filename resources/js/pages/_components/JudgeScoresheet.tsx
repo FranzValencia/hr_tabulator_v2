@@ -131,7 +131,7 @@ const JudgeScoresheet = ({
                         <tr>
                             <th>Contestant</th>
                             {criteria.map((c, index) => (
-                                <th key={index} className="text-center capitalize">
+                                <th key={index} className="text-center text-wrap capitalize">
                                     {c.name} ({c.weight}%)
                                 </th>
                             ))}
@@ -199,7 +199,7 @@ const JudgeScoresheet = ({
                 </table>
             </div>
             {/* Explanation footer */}
-            <div className="mt-4 text-sm text-gray-600 italic">
+            <div className="mt-4 text-xs text-gray-600 italic md:text-sm">
                 {pointBased ? (
                     <>
                         Scores are computed using the <strong>Point-Based</strong> method. Each criterion score given by the judge is summed and
