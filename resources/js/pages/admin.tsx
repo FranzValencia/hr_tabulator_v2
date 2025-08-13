@@ -9,6 +9,7 @@ import CategoricalWinnersComponents from './_components/CategoricalWinnersCompon
 import ContestantsComponent from './_components/ContestantsComponent';
 import JudgesComponent from './_components/JudgesComponent';
 import JudgeScoresheet from './_components/JudgeScoresheet';
+import SpecialAwardComponent from './_components/SpecialAwardComponent';
 import TotalScoreSheetComponent from './_components/TotalScoreSheetComponent';
 
 interface Props {
@@ -100,6 +101,7 @@ const admin = ({ event, judges_to_choose_from }: Props) => {
                             <div className="flex flex-col gap-8">
                                 <TotalScoreSheetComponent event={event} pointBased={pointBased} />
                                 <CategoricalWinnersComponents event={event} pointBased={pointBased} />
+                                <SpecialAwardComponent awards={specialAwards} />
                                 <div className="divider my-0"></div>
                             </div>
                         </div>
@@ -112,9 +114,7 @@ const admin = ({ event, judges_to_choose_from }: Props) => {
                                     <div className="divider my-0"></div>
                                     <TotalScoreSheetComponent event={event} pointBased={pointBased} />
                                     <CategoricalWinnersComponents event={event} pointBased={pointBased} />
-                                    {specialAwards.map((award, index) => (
-                                        <div key={index}>{award.contestant?.name}</div>
-                                    ))}
+                                    <SpecialAwardComponent awards={specialAwards} />
                                     <JudgeScoresheet
                                         key={index}
                                         judge={judge}
