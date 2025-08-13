@@ -74,7 +74,9 @@ const CategoricalWinnersComponents = ({ event, pointBased }: { event: Event; poi
                                             {winners.length > 0 ? (
                                                 <ul className="space-y-1 text-sm font-semibold text-primary">
                                                     {winners.map(({ contestant }, idx) => (
-                                                        <li key={idx}>{contestant.name}</li>
+                                                        <li key={idx} className="capitalize">
+                                                            🏅 {contestant.name}{' '}
+                                                        </li>
                                                     ))}
                                                 </ul>
                                             ) : (

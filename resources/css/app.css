@@ -41,6 +41,22 @@ body {
     @apply bg-base-300;
 }
 
+@media print {
+    .print-container {
+        display: block !important;
+        overflow: visible !important;
+    }
+
+    .page-break {
+        display: block;
+        break-before: always;
+    }
+
+    .page-break {
+        break-after: always;
+    }
+}
+
 /* body {
     background-image: url('assets/BACKGROUND_IMAGE.webp');
     background-size: cover;

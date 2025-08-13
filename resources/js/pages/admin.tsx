@@ -4,7 +4,8 @@ import { User } from '@/types';
 import { Event, SpecialAward } from '@/types/types';
 import { router } from '@inertiajs/react';
 import { Plus } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useReactToPrint } from 'react-to-print';
 import CategoricalWinnersComponents from './_components/CategoricalWinnersComponents';
 import ContestantsComponent from './_components/ContestantsComponent';
 import JudgesComponent from './_components/JudgesComponent';
@@ -27,6 +28,32 @@ const admin = ({ event, judges_to_choose_from }: Props) => {
     const [awardTitle, setAwardTitle] = useState('');
     const [awardDescription, setAwardDescription] = useState('');
     const [awardAwardee, setAwardAwardee] = useState<number | null>(null);
+
+    // PRINTING STATES
+    const contentToPrint = useRef<HTMLDivElement>(null);
+    const promiseResolveRef = useRef<((value?: void | PromiseLike<void>) => void) | null>(null);
+
+    useEffect(() => {
+        if (isPrinting && promiseResolveRef.current) {
+            // Resolves the Promise, letting `react-to-print` know that the DOM updates are completed
+            promiseResolveRef.current?.();
+        }
+    }, [isPrinting]);
+
+    const handlePrint = useReactToPrint({
+        contentRef: contentToPrint,
+        onBeforePrint: () => {
+            return new Promise((resolve) => {
+                promiseResolveRef.current = resolve;
+                setIsPrinting(true);
+            });
+        },
+        onAfterPrint: () => {
+            // Reset the Promise resolve so we can print again
+            promiseResolveRef.current = null;
+            setIsPrinting(false);
+        },
+    });
 
     const handleAwardeeSelection = (id: number) => {
         setAwardAwardee((prevId) => (prevId === id ? null : id));
@@ -92,45 +119,40 @@ const admin = ({ event, judges_to_choose_from }: Props) => {
                         </button>
                     </div>
 
-                    <button className="btn btn-success">Print</button>
+                    <button className="btn btn-success" onClick={() => handlePrint()}>
+                        Print
+                    </button>
                 </div>
 
                 {/* Scrollable Content */}
-                <div className="flex flex-1 flex-col gap-4 overflow-y-auto bg-base-100 p-8">
-                    <div className="card h-fit w-full card-xs">
+                <div className="print-container flex flex-1 flex-col gap-4 overflow-y-auto bg-base-100 p-8" ref={contentToPrint}>
+                    <div className={`card ${isPrinting ? 'h-screen' : 'h-fit'} w-full card-xs`}>
                         <div className="card-body">
                             <div className="flex flex-col gap-8">
                                 <TotalScoreSheetComponent event={event} pointBased={pointBased} />
                                 <CategoricalWinnersComponents event={event} pointBased={pointBased} />
                                 <SpecialAwardComponent awards={specialAwards} />
-                                <div className="divider my-0"></div>
                             </div>
                         </div>
                     </div>
 
-                    {event.judges?.map((judge, index) => (
-                        <div className="card h-fit w-full break-after-page card-xs" key={index}>
-                            <div className="card-body">
-                                <div className="flex flex-col gap-8">
-                                    {isPrinting && (
-                                        <>
-                                            <TotalScoreSheetComponent event={event} pointBased={pointBased} />
-                                            <CategoricalWinnersComponents event={event} pointBased={pointBased} />
-                                            <SpecialAwardComponent awards={specialAwards} />
-                                        </>
-                                    )}
-
-                                    <JudgeScoresheet
-                                        key={index}
-                                        judge={judge}
-                                        criteria={event.criteria ?? []}
-                                        contestants={event.contestants ?? []}
-                                        pointBased={pointBased}
-                                    />
+                    <div className={`${isPrinting ? 'flex flex-col' : 'h-fit'}`}>
+                        {event.judges?.map((judge, index) => (
+                            <div className={`card ${isPrinting ? 'h-screen' : 'h-fit'} w-full card-xs`} key={index}>
+                                <div className="card-body">
+                                    <div className="flex flex-col gap-8">
+                                        <JudgeScoresheet
+                                            key={index}
+                                            judge={judge}
+                                            criteria={event.criteria ?? []}
+                                            contestants={event.contestants ?? []}
+                                            pointBased={pointBased}
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
             </div>
             <dialog id="newAwardModal" className="modal">
