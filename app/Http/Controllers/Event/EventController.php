@@ -67,4 +67,15 @@ class EventController extends Controller
             'contestant_id' => $request->input('contestant_id'),
         ]);
     }
+
+    public function remove_award(Request $request)
+    {        
+        $award = SpecialAward::find($request->input('special_award_id'));
+
+        $award->update([
+            'status' => 'in-active'
+        ]);
+
+        return to_route('admin', $award->event_id);
+    }
 }

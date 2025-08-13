@@ -126,19 +126,19 @@ const admin = ({ event, judges_to_choose_from }: Props) => {
 
                 {/* Scrollable Content */}
                 <div className="print-container flex flex-1 flex-col gap-4 overflow-y-auto bg-base-100 p-8" ref={contentToPrint}>
-                    <div className={`card ${isPrinting ? 'h-screen' : 'h-fit'} w-full card-xs`}>
+                    <div className={`card ${isPrinting ? 'h-screen bg-none' : 'h-fit'} w-full card-xs`}>
                         <div className="card-body">
                             <div className="flex flex-col gap-8">
                                 <TotalScoreSheetComponent event={event} pointBased={pointBased} />
                                 <CategoricalWinnersComponents event={event} pointBased={pointBased} />
-                                <SpecialAwardComponent awards={specialAwards} />
+                                {specialAwards.length > 0 && <SpecialAwardComponent awards={specialAwards} isPrinting={isPrinting} />}
                             </div>
                         </div>
                     </div>
 
                     <div className={`${isPrinting ? 'flex flex-col' : 'h-fit'}`}>
                         {event.judges?.map((judge, index) => (
-                            <div className={`card ${isPrinting ? 'h-screen' : 'h-fit'} w-full card-xs`} key={index}>
+                            <div className={`card ${isPrinting ? 'h-screen bg-none' : 'h-fit'} w-full card-xs`} key={index}>
                                 <div className="card-body">
                                     <div className="flex flex-col gap-8">
                                         <JudgeScoresheet
