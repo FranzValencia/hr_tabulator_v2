@@ -213,6 +213,14 @@ const JudgeScoresheet = ({
                     </>
                 )}
             </div>
+            <div className="flex justify-end">
+                <div className="mt-6 w-fit text-center">
+                    <span className="text-xs font-bold uppercase">{judge.name}</span>
+                    <div className="w-64 border-t-1 text-center text-xs">
+                        <div>Judge Signature</div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };

@@ -158,6 +158,7 @@ const TotalScoreSheetComponent = ({ event, pointBased }: { event: Event; pointBa
                     <table className="table table-fixed table-sm">
                         <thead>
                             <tr>
+                                <th>Final Rank</th>
                                 <th>Contestant</th>
                                 {eventJudges.map((judge, i) => (
                                     <th className="text-center" key={judge.id}>
@@ -165,12 +166,12 @@ const TotalScoreSheetComponent = ({ event, pointBased }: { event: Event; pointBa
                                     </th>
                                 ))}
                                 <th className="text-center">{pointBased ? 'Average Score' : 'Total Rank'}</th>
-                                <th className="text-center">Final Rank</th>
                             </tr>
                         </thead>
                         <tbody>
                             {resultsToDisplay.map(({ contestant, judgeScores, judgeRanks, averageScore, totalRank, finalRank }, idx) => (
                                 <tr key={idx}>
+                                    <td>{finalRank}</td>
                                     <td className="font-bold">{contestant.name}</td>
                                     {pointBased
                                         ? judgeScores.map((score, i) => (
@@ -184,7 +185,6 @@ const TotalScoreSheetComponent = ({ event, pointBased }: { event: Event; pointBa
                                               </td>
                                           ))}
                                     <td className="text-center">{pointBased ? (averageScore > 0 ? averageScore.toFixed(2) : '-') : totalRank}</td>
-                                    <td className="text-center">{finalRank}</td>
                                 </tr>
                             ))}
                         </tbody>

@@ -18,6 +18,7 @@ interface Props {
 }
 
 const admin = ({ event, judges_to_choose_from }: Props) => {
+    const [isPrinting, setIsPrinting] = useState(false);
     const [pointBased, setPointBased] = useState(true);
     const { showToast } = useToast();
 
@@ -108,13 +109,17 @@ const admin = ({ event, judges_to_choose_from }: Props) => {
                     </div>
 
                     {event.judges?.map((judge, index) => (
-                        <div className="card h-fit w-full card-xs" key={index}>
+                        <div className="card h-fit w-full break-after-page card-xs" key={index}>
                             <div className="card-body">
                                 <div className="flex flex-col gap-8">
-                                    <div className="divider my-0"></div>
-                                    <TotalScoreSheetComponent event={event} pointBased={pointBased} />
-                                    <CategoricalWinnersComponents event={event} pointBased={pointBased} />
-                                    <SpecialAwardComponent awards={specialAwards} />
+                                    {isPrinting && (
+                                        <>
+                                            <TotalScoreSheetComponent event={event} pointBased={pointBased} />
+                                            <CategoricalWinnersComponents event={event} pointBased={pointBased} />
+                                            <SpecialAwardComponent awards={specialAwards} />
+                                        </>
+                                    )}
+
                                     <JudgeScoresheet
                                         key={index}
                                         judge={judge}
@@ -122,7 +127,6 @@ const admin = ({ event, judges_to_choose_from }: Props) => {
                                         contestants={event.contestants ?? []}
                                         pointBased={pointBased}
                                     />
-                                    <div className="divider my-0"></div>
                                 </div>
                             </div>
                         </div>

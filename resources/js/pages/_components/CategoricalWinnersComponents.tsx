@@ -53,11 +53,11 @@ const CategoricalWinnersComponents = ({ event, pointBased }: { event: Event; poi
                     <thead>
                         <tr className="text-sm font-bold uppercase">
                             <th>Criterion</th>
+                            <th>Winner(s)</th>
                             <th>Judge Scores</th>
                             <th>Average</th>
                             {!pointBased && <th>Rank</th>}
                             {pointBased && <th>Weighted Score</th>}
-                            <th>Winner(s)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -70,7 +70,17 @@ const CategoricalWinnersComponents = ({ event, pointBased }: { event: Event; poi
                                         <td>
                                             {criterion.name} <span className="text-sm font-bold text-base-content/50">({criterion.weight}%)</span>
                                         </td>
-
+                                        <td>
+                                            {winners.length > 0 ? (
+                                                <ul className="space-y-1 text-sm font-semibold text-primary">
+                                                    {winners.map(({ contestant }, idx) => (
+                                                        <li key={idx}>{contestant.name}</li>
+                                                    ))}
+                                                </ul>
+                                            ) : (
+                                                <span className="text-gray-500 italic">-</span>
+                                            )}
+                                        </td>
                                         <td>
                                             {winners.length > 0 ? (
                                                 <ul className="space-y-3 text-xs">
@@ -112,17 +122,6 @@ const CategoricalWinnersComponents = ({ event, pointBased }: { event: Event; poi
                                                 )}
                                             </td>
                                         )}
-                                        <td>
-                                            {winners.length > 0 ? (
-                                                <ul className="space-y-1 text-sm font-semibold text-primary">
-                                                    {winners.map(({ contestant }, idx) => (
-                                                        <li key={idx}>{contestant.name}</li>
-                                                    ))}
-                                                </ul>
-                                            ) : (
-                                                <span className="text-gray-500 italic">-</span>
-                                            )}
-                                        </td>
                                     </tr>
                                 );
                             })
