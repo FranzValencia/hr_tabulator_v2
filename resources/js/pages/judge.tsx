@@ -88,15 +88,15 @@ const judge = ({ eventUsers }: Props) => {
             </div>
             <div className="my-4 p-4 text-center text-4xl font-bold uppercase">{activeEvent?.name}</div>
 
-            <div className="overflow-x-auto bg-base-100 shadow-sm">
+            <div className="overflow-x-auto border border-base-content/5 bg-base-100 shadow">
                 <table className="table w-full table-fixed">
                     {/* head */}
-                    <thead className="bg-base-200">
+                    <thead>
                         <tr>
                             <th className="text-center">Contestant</th>
                             {activeCriteria?.map((criterion, index) => (
                                 <th key={index} className="text-center uppercase">
-                                    {criterion.name} ({criterion.weight})
+                                    {criterion.name} ({criterion.weight}%)
                                 </th>
                             ))}
                             <th className="text-center">Average</th>
@@ -107,7 +107,7 @@ const judge = ({ eventUsers }: Props) => {
                             let contestantScores = activeScores?.filter((score) => score.contestant_id === contestant.id);
 
                             return (
-                                <tr key={index}>
+                                <tr key={index} className="border-t border-base-content/15">
                                     <th className={`text-center`}>{contestant.name}</th>
                                     {activeCriteria?.map((criterion, index) => {
                                         let scoreId = activeScores?.find(
@@ -119,7 +119,7 @@ const judge = ({ eventUsers }: Props) => {
                                             )?.score ?? 0;
 
                                         return (
-                                            <th key={index} className={`text-center ${index % 2 === 0 && 'bg-base-200/90'}`}>
+                                            <th key={index} className={`text-center`}>
                                                 <input
                                                     type="number"
                                                     className="input max-w-32 text-center"
@@ -154,7 +154,7 @@ const judge = ({ eventUsers }: Props) => {
                         })}
                     </tbody>
                 </table>
-                <div className="flex items-center justify-between border-t border-base-300 p-4">
+                <div className="flex items-center justify-between border-t border-base-300 bg-base-300/50 p-4">
                     <div className="ml-8 font-bold text-base-content/75 uppercase">Judged by: {user.name}</div>
                     <button
                         className="btn btn-wide btn-success"

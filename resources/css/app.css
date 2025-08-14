@@ -57,10 +57,29 @@ body {
     }
 }
 
-/* body {
+body {
     background-image: url('assets/BACKGROUND_IMAGE.webp');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-} */
+}
+
+@keyframes fadeLong {
+    0% {
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    } /* Fade in for first 5s (25% of 20s) */
+    90% {
+        opacity: 1;
+    } /* Stay visible until 18s (90% of 20s) */
+    100% {
+        opacity: 0;
+    } /* Fade out for last 2s (from 90% to 100%) */
+}
+
+.footer-fade-long {
+    animation: fadeLong 25s ease-in-out infinite;
+}

@@ -4,7 +4,8 @@ import { ReactNode } from 'react';
 
 const AuthenticatedLayout = ({ children, className }: { children: ReactNode; className?: string }) => {
     return (
-        <div>
+        <div className="flex min-h-screen flex-col">
+            {/* Navbar */}
             <div
                 className={`flex h-[64px] w-full ${route().current('home') || route().current('judge') ? 'justify-end' : 'justify-between'} items-center bg-base-200 px-8 shadow`}
             >
@@ -56,7 +57,18 @@ const AuthenticatedLayout = ({ children, className }: { children: ReactNode; cla
                     </form>
                 </dialog>
             </div>
-            <div className={`h-[calc(100vh-64px)] ${className}`}>{children}</div>
+
+            {/* Main content fills remaining space */}
+            <main className={`flex-1 ${className}`}>{children}</main>
+
+            {/* Footer */}
+            {route().current('judge') && (
+                <footer className="footer-fade-long footer flex items-center justify-evenly bg-base-200/50 p-2 text-base-content sm:footer-horizontal">
+                    <img src="assets/125th_LOGO.webp" alt="logos" className="max-h-40" />
+                    <img src="assets/CSCBPLOGOS.webp" alt="logos" className="max-h-32" />
+                    <img src="assets/PCSATHEME.webp" alt="logos" className="max-h-16" />
+                </footer>
+            )}
         </div>
     );
 };
