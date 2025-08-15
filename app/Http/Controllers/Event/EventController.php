@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Event;
 
+use App\Events\ScoresUpdated;
 use App\Http\Controllers\Controller;
 use App\Models\Criterion;
 use App\Models\Event;
 use App\Models\Score;
 use App\Models\SpecialAward;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Log;
 
 class EventController extends Controller
 {
@@ -55,6 +56,8 @@ class EventController extends Controller
             }
         }
 
+        ScoresUpdated::dispatch();
+        Log::info('Event dispatched from controller');
     }
 
 

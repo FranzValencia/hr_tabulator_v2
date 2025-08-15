@@ -1,8 +1,9 @@
 import { useToast } from '@/context/ToastContext';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout';
-import { User } from '@/types';
+import { PageProps, User } from '@/types';
 import { Event, SpecialAward } from '@/types/types';
-import { router } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
+import { useEcho } from '@laravel/echo-react';
 import { Plus } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useReactToPrint } from 'react-to-print';
@@ -19,6 +20,7 @@ interface Props {
 }
 
 const admin = ({ event, judges_to_choose_from }: Props) => {
+    const { user } = usePage<PageProps>().props.auth;
     const [isPrinting, setIsPrinting] = useState(false);
     const [pointBased, setPointBased] = useState(true);
     const { showToast } = useToast();
@@ -39,6 +41,10 @@ const admin = ({ event, judges_to_choose_from }: Props) => {
             promiseResolveRef.current?.();
         }
     }, [isPrinting]);
+
+    useEcho(`scores-updated.${user.id}`, 'ScoresUpdated', (e: any) => {
+        console.log('scores_updated');
+    });
 
     const handlePrint = useReactToPrint({
         contentRef: contentToPrint,
