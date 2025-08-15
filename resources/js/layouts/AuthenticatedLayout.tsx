@@ -59,7 +59,7 @@ const AuthenticatedLayout = ({ children, className }: { children: ReactNode; cla
             </div>
 
             {/* Main content fills remaining space */}
-            <main className={`flex-1 ${className}`}>{children}</main>
+            <main className={`${route().current('judge') ? 'flex-1' : 'h-[calc(100vh-64px)]'} ${className}`}>{children}</main>
 
             {/* Footer */}
             {route().current('judge') && (
