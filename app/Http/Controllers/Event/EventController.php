@@ -57,7 +57,6 @@ class EventController extends Controller
         }
 
         ScoresUpdated::dispatch();
-        Log::info('Event dispatched from controller');
     }
 
 
@@ -69,6 +68,8 @@ class EventController extends Controller
             'event_id' => $request->input('event_id'),
             'contestant_id' => $request->input('contestant_id'),
         ]);
+
+        ScoresUpdated::dispatch();
     }
 
     public function remove_award(Request $request)
@@ -80,5 +81,7 @@ class EventController extends Controller
         ]);
 
         return to_route('admin', $award->event_id);
+
+        ScoresUpdated::dispatch();
     }
 }

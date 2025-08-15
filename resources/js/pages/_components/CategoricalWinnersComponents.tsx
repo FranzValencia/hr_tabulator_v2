@@ -1,12 +1,17 @@
 import { User } from '@/types';
 import { Contestant, Criterion, Event } from '@/types/types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const EPSILON = 0.0001;
 
-const CategoricalWinnersComponents = ({ event, pointBased }: { event: Event; pointBased: boolean }) => {
-    const [activeCriteria, setActiveCriteria] = useState<Criterion[]>(event.criteria ?? []);
-    const [activeContestants, setActiveContestants] = useState<Contestant[]>(event.contestants ?? []);
+const CategoricalWinnersComponents = ({ event: eventFromProps, pointBased }: { event: Event; pointBased: boolean }) => {
+    useEffect(() => {
+        setActiveCriteria(eventFromProps.criteria ?? []);
+        setActiveContestants(eventFromProps.contestants ?? []);
+    }, [eventFromProps]);
+
+    const [activeCriteria, setActiveCriteria] = useState<Criterion[]>([]);
+    const [activeContestants, setActiveContestants] = useState<Contestant[]>([]);
 
     const getCriterionWinners = (criterion: Criterion) => {
         if (!activeContestants.length) return [];
@@ -91,7 +96,7 @@ const CategoricalWinnersComponents = ({ event, pointBased }: { event: Event; poi
                                                             <div className="font-medium">{contestant.name}:</div>
                                                             <ul className="pl-2">
                                                                 {scores.map((score, i) => {
-                                                                    const judge = event.judges?.find((j) =>
+                                                                    const judge = eventFromProps.judges?.find((j) =>
                                                                         j.event_users?.some((eu: User) => eu.id === score.event_user_id),
                                                                     );
                                                                     return (

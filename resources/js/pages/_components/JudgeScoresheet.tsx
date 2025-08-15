@@ -1,6 +1,6 @@
 import { User } from '@/types';
-import { Contestant, Criterion } from '@/types/types';
-import { useMemo, useState } from 'react';
+import { Contestant, Criterion, Score } from '@/types/types';
+import { useEffect, useMemo, useState } from 'react';
 
 const JudgeScoresheet = ({
     judge,
@@ -13,7 +13,11 @@ const JudgeScoresheet = ({
     contestants: Contestant[];
     pointBased: boolean;
 }) => {
-    const [givenScores] = useState(judge.scores_given ?? []);
+    const [givenScores, setGivenScores] = useState<Score[]>([]);
+
+    useEffect(() => {
+        setGivenScores(judge.scores_given ?? []);
+    }, [judge]);
 
     // rank per criterion (descending), with tie handling
     const rankPerCriterion = useMemo(() => {

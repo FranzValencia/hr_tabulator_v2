@@ -1,6 +1,6 @@
 import { User } from '@/types';
 import { Contestant, Criterion, Event, Score } from '@/types/types';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 type RankedResult = {
     contestant: Contestant;
@@ -23,10 +23,18 @@ export const getAverage = (scores: Score[], criteria: Criterion[]) => {
     );
 };
 
-const TotalScoreSheetComponent = ({ event, pointBased }: { event: Event; pointBased: boolean }) => {
-    const [eventCriteria] = useState<Criterion[]>(event.criteria ?? []);
-    const [eventJudges] = useState<User[]>(event.judges ?? []);
-    const [eventContestants] = useState<Contestant[]>(event.contestants ?? []);
+const TotalScoreSheetComponent = ({ event: eventFromProps, pointBased }: { event: Event; pointBased: boolean }) => {
+    useEffect(() => {
+        setEvent(eventFromProps);
+        setEventCriteria(eventFromProps.criteria ?? []);
+        setEventJudges(eventFromProps.judges ?? []);
+        setEventContestants(eventFromProps.contestants ?? []);
+    }, [eventFromProps]);
+
+    const [event, setEvent] = useState(eventFromProps);
+    const [eventCriteria, setEventCriteria] = useState<Criterion[]>([]);
+    const [eventJudges, setEventJudges] = useState<User[]>([]);
+    const [eventContestants, setEventContestants] = useState<Contestant[]>([]);
     const [showJudgeNames] = useState(false);
 
     // Calculate point-based results: average scores + final rank by average

@@ -7,6 +7,7 @@ use App\Http\Controllers\Contestant\ContestantController;
 use App\Models\Event;
 use App\Models\EventUser;
 use App\Models\User;
+use Clue\Redis\Protocol\Model\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -70,6 +71,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'event' => $event,
         ]);
     })->name('admin');
+
+    Route::get('updated-event/{id}', function($id){
+        $event = Event::with([
+            'criteria',
+            'judges.eventUsers',           // So you can match event_user_id in scores
+            'judges.scoresGiven',          // Optional, if you want full score data
+            'contestants.scores.criterion', // Load scores and their criteria
+            'specialAwards' => function ($query) {
+                $query->where('status', 'active')
+                ->with('contestant');
+            }
+        ])->findOrFail($id);
+
+        return response()->json($event);
+        // return to_route('admin', $event->id);
+    })->name('get.updated.event');
 
     Route::post('/event/create', [EventController::class, 'event_create'])->name('event.create');
 

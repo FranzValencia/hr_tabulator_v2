@@ -4,6 +4,7 @@ import { PageProps, User } from '@/types';
 import { Event, SpecialAward } from '@/types/types';
 import { router, usePage } from '@inertiajs/react';
 import { useEcho } from '@laravel/echo-react';
+import axios from 'axios';
 import { Plus } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useReactToPrint } from 'react-to-print';
@@ -19,14 +20,17 @@ interface Props {
     judges_to_choose_from: User[];
 }
 
-const admin = ({ event, judges_to_choose_from }: Props) => {
+const Admin = ({ event: eventFromProps, judges_to_choose_from }: Props) => {
     const { user } = usePage<PageProps>().props.auth;
     const [isPrinting, setIsPrinting] = useState(false);
     const [pointBased, setPointBased] = useState(true);
     const { showToast } = useToast();
 
+    // EVENT STATE
+    const [event, setEvent] = useState<Event>(eventFromProps);
+
     // NEW AWARD STATES
-    const [specialAwards] = useState<SpecialAward[]>(event.special_awards ?? []);
+    const [specialAwards, setSpecialAwards] = useState<SpecialAward[]>(event.special_awards ?? []);
     const [awardTitle, setAwardTitle] = useState('');
     const [awardDescription, setAwardDescription] = useState('');
     const [awardAwardee, setAwardAwardee] = useState<number | null>(null);
@@ -35,16 +39,28 @@ const admin = ({ event, judges_to_choose_from }: Props) => {
     const contentToPrint = useRef<HTMLDivElement>(null);
     const promiseResolveRef = useRef<((value?: void | PromiseLike<void>) => void) | null>(null);
 
+    const fetchUpdatedEvent = async () => {
+        await axios.get(route('get.updated.event', event.id)).then((res) => {
+            setEvent(res.data);
+            setSpecialAwards(res.data.special_awards);
+        });
+        // await router.get(route('get.updated.event', event.id));
+    };
+
+    useEcho(`scores-updated.${user.id}`, 'ScoresUpdated', (e: any) => {
+        fetchUpdatedEvent();
+    });
+
+    useEffect(() => {
+        console.log('event from props: ', eventFromProps);
+    }, [eventFromProps]);
+
     useEffect(() => {
         if (isPrinting && promiseResolveRef.current) {
             // Resolves the Promise, letting `react-to-print` know that the DOM updates are completed
             promiseResolveRef.current?.();
         }
     }, [isPrinting]);
-
-    useEcho(`scores-updated.${user.id}`, 'ScoresUpdated', (e: any) => {
-        console.log('scores_updated');
-    });
 
     const handlePrint = useReactToPrint({
         contentRef: contentToPrint,
@@ -175,7 +191,6 @@ const admin = ({ event, judges_to_choose_from }: Props) => {
                             placeholder="( Optional )"
                             value={awardDescription}
                             onChange={(e) => setAwardDescription(e.target.value)}
-                            required
                         ></textarea>
                     </fieldset>
                     <fieldset className="fieldset">
@@ -215,4 +230,4 @@ const admin = ({ event, judges_to_choose_from }: Props) => {
     );
 };
 
-export default admin;
+export default Admin;
