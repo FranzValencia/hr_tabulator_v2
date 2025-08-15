@@ -58,7 +58,7 @@ body {
 }
 
 body {
-    background-image: url('assets/BACKGROUND_IMAGE.webp');
+    background-image: url('../../public/assets/BACKGROUND_IMAGE.webp');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
