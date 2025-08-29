@@ -14,6 +14,10 @@ import JudgesComponent from './_components/JudgesComponent';
 import JudgeScoresheet from './_components/JudgeScoresheet';
 import SpecialAwardComponent from './_components/SpecialAwardComponent';
 import TotalScoreSheetComponent from './_components/TotalScoreSheetComponent';
+// LOGOS
+import Logo125 from '../../../public/assets/125th_LOGO.webp';
+import CSCBPLogo from '../../../public/assets/CSCBPLOGOS.webp';
+import PCSATheme from '../../../public/assets/PCSATHEME.webp';
 
 interface Props {
     event: Event;
@@ -159,8 +163,8 @@ const Admin = ({ event: eventFromProps, judges_to_choose_from }: Props) => {
                     </div>
                     <div className={`${!isPrinting && 'my-4'}`}>
                         {event.judges?.map((judge, index) => (
-                            <div key={index} className={`page-break card ${isPrinting ? 'h-auto bg-none' : 'h-fit'} judge-print w-full card-xs`}>
-                                <div className="card-body">
+                            <div key={index} className={`page-break judge-print card w-full card-xs ${isPrinting ? 'bg-none' : 'h-fit'}`}>
+                                <div className={`card-body ${isPrinting ? 'flex h-screen flex-col justify-between pt-16' : 'flex flex-col gap-8'}`}>
                                     <div className="flex flex-col gap-8">
                                         <JudgeScoresheet
                                             judge={judge}
@@ -169,6 +173,14 @@ const Admin = ({ event: eventFromProps, judges_to_choose_from }: Props) => {
                                             pointBased={pointBased}
                                         />
                                     </div>
+
+                                    {isPrinting && (
+                                        <footer className="footer flex items-center justify-between bg-base-200/50 p-2 text-base-content sm:footer-horizontal">
+                                            <img src={Logo125} alt="logos" className="max-h-40" />
+                                            <img src={CSCBPLogo} alt="logos" className="max-h-32" />
+                                            <img src={PCSATheme} alt="logos" className="max-h-16" />
+                                        </footer>
+                                    )}
                                 </div>
                             </div>
                         ))}

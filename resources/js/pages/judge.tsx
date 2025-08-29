@@ -95,7 +95,7 @@ const judge = ({ eventUsers }: Props) => {
                         <tr>
                             <th className="text-center">Contestant</th>
                             {activeCriteria?.map((criterion, index) => (
-                                <th key={index} className="text-center uppercase">
+                                <th key={index} className="text-center text-wrap uppercase">
                                     {criterion.name} ({criterion.weight}%)
                                 </th>
                             ))}
