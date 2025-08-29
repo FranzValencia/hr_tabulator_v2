@@ -147,7 +147,7 @@ const Admin = ({ event: eventFromProps, judges_to_choose_from }: Props) => {
                 </div>
 
                 {/* Scrollable Content */}
-                <div className="block gap-4 overflow-y-auto bg-base-100 p-8" ref={contentToPrint}>
+                <div className="block gap-4 overflow-y-auto bg-white p-8" ref={contentToPrint}>
                     <div className="print-avoid-break space-y-4">
                         <TotalScoreSheetComponent event={event} pointBased={pointBased} />
                         <CategoricalWinnersComponents event={event} pointBased={pointBased} />
