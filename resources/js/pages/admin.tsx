@@ -147,8 +147,40 @@ const Admin = ({ event: eventFromProps, judges_to_choose_from }: Props) => {
                 </div>
 
                 {/* Scrollable Content */}
-                <div className="print-container flex flex-1 flex-col gap-4 overflow-y-auto bg-base-100 p-8" ref={contentToPrint}>
-                    <div className={`card ${isPrinting ? 'h-screen bg-none' : 'h-fit'} w-full card-xs`}>
+                <div className="block gap-4 overflow-y-auto bg-base-100 p-8" ref={contentToPrint}>
+                    <div className="print-avoid-break space-y-4">
+                        <TotalScoreSheetComponent event={event} pointBased={pointBased} />
+                        <CategoricalWinnersComponents event={event} pointBased={pointBased} />
+                        {specialAwards.length > 0 && (
+                            <div className="print-avoid-break">
+                                <SpecialAwardComponent awards={specialAwards} isPrinting={isPrinting} />
+                            </div>
+                        )}
+                    </div>
+                    <div className={`${!isPrinting && 'my-4'}`}>
+                        {event.judges?.map((judge, index) => (
+                            <div key={index} className={`page-break card ${isPrinting ? 'h-auto bg-none' : 'h-fit'} judge-print w-full card-xs`}>
+                                <div className="card-body">
+                                    <div className="flex flex-col gap-8">
+                                        <JudgeScoresheet
+                                            judge={judge}
+                                            criteria={event.criteria ?? []}
+                                            contestants={event.contestants ?? []}
+                                            pointBased={pointBased}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+            {/* <div className="block space-y-4" ref={contentToPrint}>
+                        <TotalScoreSheetComponent event={event} pointBased={pointBased} />
+                        <CategoricalWinnersComponents event={event} pointBased={pointBased} />
+                        {specialAwards.length > 0 && <SpecialAwardComponent awards={specialAwards} isPrinting={isPrinting} />}
+                    </div> */}
+            {/* <div className={`card ${isPrinting ? 'h-auto bg-none' : 'h-fit'} w-full card-xs`} ref={contentToPrint}>
                         <div className="card-body">
                             <div className="flex flex-col gap-8">
                                 <TotalScoreSheetComponent event={event} pointBased={pointBased} />
@@ -156,11 +188,11 @@ const Admin = ({ event: eventFromProps, judges_to_choose_from }: Props) => {
                                 {specialAwards.length > 0 && <SpecialAwardComponent awards={specialAwards} isPrinting={isPrinting} />}
                             </div>
                         </div>
-                    </div>
+                    </div> */}
 
-                    <div className={`${isPrinting ? 'flex flex-col' : 'h-fit'}`}>
+            {/* <div className={`${isPrinting ? 'flex flex-col' : 'h-fit'}`}>
                         {event.judges?.map((judge, index) => (
-                            <div className={`card ${isPrinting ? 'h-screen bg-none' : 'h-fit'} w-full card-xs`} key={index}>
+                            <div className={`card ${isPrinting ? 'h-auto bg-none' : 'h-fit'} judge-print w-full card-xs`} key={index}>
                                 <div className="card-body">
                                     <div className="flex flex-col gap-8">
                                         <JudgeScoresheet
@@ -174,9 +206,7 @@ const Admin = ({ event: eventFromProps, judges_to_choose_from }: Props) => {
                                 </div>
                             </div>
                         ))}
-                    </div>
-                </div>
-            </div>
+                    </div> */}
             <dialog id="newAwardModal" className="modal">
                 <form onSubmit={(e) => handleCreateAward(e)} className="modal-box max-w-sm">
                     <h3 className="text-lg font-bold">Special award</h3>

@@ -40,20 +40,15 @@
 body {
     @apply bg-base-300;
 }
-
 @media print {
-    .print-container {
-        display: block !important;
-        overflow: visible !important;
+    .print-avoid-break {
+        break-inside: avoid;
+        page-break-inside: avoid;
     }
 
     .page-break {
-        display: block;
-        break-before: always;
-    }
-
-    .page-break {
-        break-after: always;
+        page-break-before: always; /* legacy support */
+        break-before: page;
     }
 }
 
