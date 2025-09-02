@@ -11,13 +11,13 @@ import { useReactToPrint } from 'react-to-print';
 import CategoricalWinnersComponents from './_components/CategoricalWinnersComponents';
 import ContestantsComponent from './_components/ContestantsComponent';
 import JudgesComponent from './_components/JudgesComponent';
-import JudgeScoresheet from './_components/JudgeScoresheet';
 import SpecialAwardComponent from './_components/SpecialAwardComponent';
 import TotalScoreSheetComponent from './_components/TotalScoreSheetComponent';
 // LOGOS
 import Logo125 from '../../../public/assets/125th_LOGO.webp';
 import CSCBPLogo from '../../../public/assets/CSCBPLOGOS.webp';
 import PCSATheme from '../../../public/assets/PCSATHEME.webp';
+import JudgeScoresheet2 from './_components/JudgeScoresheet2';
 
 interface Props {
     event: Event;
@@ -166,12 +166,7 @@ const Admin = ({ event: eventFromProps, judges_to_choose_from }: Props) => {
                             <div key={index} className={`page-break judge-print card w-full card-xs ${isPrinting ? 'bg-none' : 'h-fit'}`}>
                                 <div className={`card-body ${isPrinting ? 'flex h-screen flex-col justify-between pt-16' : 'flex flex-col gap-8'}`}>
                                     <div className="flex flex-col gap-8">
-                                        <JudgeScoresheet
-                                            judge={judge}
-                                            criteria={event.criteria ?? []}
-                                            contestants={event.contestants ?? []}
-                                            pointBased={pointBased}
-                                        />
+                                        <JudgeScoresheet2 judge={judge} contestants={event.contestants ?? []} criteria={event.criteria ?? []} />
                                     </div>
 
                                     {isPrinting && (
