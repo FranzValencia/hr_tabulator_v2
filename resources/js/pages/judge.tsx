@@ -34,9 +34,7 @@ const judge = ({ eventUsers }: Props) => {
         return arr1.some((score, idx) => score.id !== arr2[idx].id || score.score !== arr2[idx].score);
     };
 
-    const maxScore = 100;
-
-    const handleScoreChange = (scoreId: number, newScore: number | null) => {
+    const handleScoreChange = (scoreId: number, newScore: number | null, maxScore: number) => {
         setActiveScores((prevScores) => {
             if (!prevScores) return prevScores;
 
@@ -96,10 +94,13 @@ const judge = ({ eventUsers }: Props) => {
                             <th className="text-center">Contestant</th>
                             {activeCriteria?.map((criterion, index) => (
                                 <th key={index} className="text-center text-wrap uppercase">
-                                    {criterion.name} ({criterion.weight}%)
+                                    <div className="flex flex-col">
+                                        <div>{criterion.name}</div>
+                                        <div>(1 - {criterion.weight})</div>
+                                    </div>
                                 </th>
                             ))}
-                            <th className="text-center">Average</th>
+                            <th className="text-center">Total Score</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -126,7 +127,7 @@ const judge = ({ eventUsers }: Props) => {
                                                     value={score > 0 ? score : ''}
                                                     onChange={(e) => {
                                                         const val = e.target.value;
-                                                        handleScoreChange(scoreId!, val === '' ? null : parseFloat(val));
+                                                        handleScoreChange(scoreId!, val === '' ? null : parseFloat(val), criterion.weight);
                                                     }}
                                                 />
                                             </th>
@@ -142,11 +143,13 @@ const judge = ({ eventUsers }: Props) => {
                                                     contestantScores.find((s) => s.criterion_id === criterion.id && s.contestant_id === contestant.id)
                                                         ?.score ?? 0;
 
+                                                return sum + score;
                                                 // Weight: assume criterion.weight is in %
-                                                return sum + score * (criterion.weight / 100);
+                                                // return sum + score * (criterion.weight / 100);
                                             }, 0);
 
-                                            return total.toFixed(2); // Show 2 decimal places
+                                            return total; // Show 2 decimal places
+                                            // return total.toFixed(2); // Show 2 decimal places
                                         })()}
                                     </th>
                                 </tr>
