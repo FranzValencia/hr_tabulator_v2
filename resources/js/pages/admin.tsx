@@ -11,13 +11,13 @@ import { useReactToPrint } from 'react-to-print';
 import ContestantsComponent from './_components/ContestantsComponent';
 import JudgesComponent from './_components/JudgesComponent';
 import SpecialAwardComponent from './_components/SpecialAwardComponent';
-import TotalScoreSheetComponent from './_components/TotalScoreSheetComponent';
 // LOGOS
 import Logo125 from '../../../public/assets/125th_LOGO.webp';
 import CSCBPLogo from '../../../public/assets/CSCBPLOGOS.webp';
 import PCSATheme from '../../../public/assets/PCSATHEME.webp';
 import CriterionWinnersTable from './_components/CriterionWinnersTable';
 import JudgeScoresheet2 from './_components/JudgeScoresheet2';
+import OverallWinnersTable from './_components/OverallWinnersTable';
 
 interface Props {
     event: Event;
@@ -153,7 +153,13 @@ const Admin = ({ event: eventFromProps, judges_to_choose_from }: Props) => {
                 {/* Scrollable Content */}
                 <div className="block gap-4 overflow-y-auto bg-white p-8" ref={contentToPrint}>
                     <div className="print-avoid-break space-y-4">
-                        <TotalScoreSheetComponent event={event} pointBased={pointBased} />
+                        {/* <TotalScoreSheetComponent event={event} pointBased={pointBased} /> */}
+                        <OverallWinnersTable
+                            pointBased={pointBased}
+                            judges={event.judges ?? []}
+                            contestants={event.contestants ?? []}
+                            criteria={event.criteria ?? []}
+                        />
                         {/* <CategoricalWinnersComponents event={event} pointBased={pointBased} /> */}
                         <CriterionWinnersTable pointBased={pointBased} contestants={event.contestants ?? []} criteria={event.criteria ?? []} />
                         {specialAwards.length > 0 && (
