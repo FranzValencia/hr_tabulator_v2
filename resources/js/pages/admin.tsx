@@ -166,7 +166,12 @@ const Admin = ({ event: eventFromProps, judges_to_choose_from }: Props) => {
                             <div key={index} className={`page-break judge-print card w-full card-xs ${isPrinting ? 'bg-none' : 'h-fit'}`}>
                                 <div className={`card-body ${isPrinting ? 'flex h-screen flex-col justify-between pt-16' : 'flex flex-col gap-8'}`}>
                                     <div className="flex flex-col gap-8">
-                                        <JudgeScoresheet2 judge={judge} contestants={event.contestants ?? []} criteria={event.criteria ?? []} />
+                                        <JudgeScoresheet2
+                                            judge={judge}
+                                            pointBased={pointBased}
+                                            contestants={event.contestants ?? []}
+                                            criteria={event.criteria ?? []}
+                                        />
                                     </div>
 
                                     {isPrinting && (

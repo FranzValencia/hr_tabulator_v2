@@ -5,7 +5,7 @@ import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 
 // Access env variable directly
-const networkHost = process.env.VITE_NETWORK_URL || 'localhost'; // fallback if not defined
+const networkHost = '192.168.50.51'; // fallback if not defined
 
 export default defineConfig({
     plugins: [

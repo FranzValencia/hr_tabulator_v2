@@ -1,27 +1,120 @@
 import { User } from '@/types';
-import { Contestant, Criterion } from '@/types/types';
+import { Contestant, Criterion, Score } from '@/types/types';
 
 interface Props {
     judge: User;
     contestants: Contestant[];
     criteria: Criterion[];
+    pointBased: boolean;
 }
 
-const JudgeScoresheet2 = ({ judge, contestants, criteria }: Props) => {
-    const totaledScores = () => {
-        let scoresheet = contestants.map((contestant) => {
-            return {
-                contestant: contestant.name,
-                scores: contestant.scores,
-                total_score: contestant.scores?.reduce((total, score) => total + (score?.score ?? 0), 0),
-            };
-        });
+type RankedEntry = {
+    contestant: string;
+    scores?: Score[];
+    total_score: number;
+    rank: number;
+    displayedScores: (number | string)[]; // raw scores (point-based) or ranks (rank-based)
+};
 
-        // Sort by total_score in descending order (highest score first)
-        scoresheet.sort((a, b) => (b.total_score ?? 0) - (a.total_score ?? 0));
+const JudgeScoresheet2 = ({ judge, contestants, criteria, pointBased }: Props) => {
+    const totaledScores = (): RankedEntry[] => {
+        let scoresheet: RankedEntry[] = [];
+
+        if (pointBased) {
+            // POINT-BASED: sum raw scores per contestant
+            scoresheet = contestants.map((contestant) => {
+                const scores = contestant.scores || [];
+                const displayedScores = criteria.map((criterion) => {
+                    const score = scores.find((s) => s.criterion_id === criterion.id)?.score ?? 0;
+                    return score;
+                });
+
+                const total_score = displayedScores.reduce((sum, score) => sum + (typeof score === 'number' ? score : 0), 0);
+
+                return {
+                    contestant: contestant.name,
+                    scores: contestant.scores,
+                    total_score,
+                    displayedScores,
+                    rank: 0, // placeholder, will be set later
+                };
+            });
+
+            // Sort descending (higher total = better rank)
+            scoresheet.sort((a, b) => b.total_score - a.total_score);
+        } else {
+            // RANK-BASED: calculate per-criterion ranks and sum them
+            const criterionRanks: Record<number, Record<string, number>> = {}; // criterion_id -> { contestantName: rank }
+
+            criteria.forEach((criterion) => {
+                const scoresForCriterion = contestants.map((contestant) => {
+                    const score = contestant.scores?.find((s) => s.criterion_id === criterion.id)?.score ?? 0;
+                    return {
+                        name: contestant.name,
+                        score,
+                    };
+                });
+
+                // Sort descending
+                scoresForCriterion.sort((a, b) => b.score - a.score);
+
+                const ranks: Record<string, number> = {};
+                let rank = 1;
+                for (let i = 0; i < scoresForCriterion.length; i++) {
+                    if (i > 0 && scoresForCriterion[i].score === scoresForCriterion[i - 1].score) {
+                        ranks[scoresForCriterion[i].name] = ranks[scoresForCriterion[i - 1].name];
+                    } else {
+                        ranks[scoresForCriterion[i].name] = i + 1;
+                    }
+                }
+
+                criterionRanks[criterion.id] = ranks;
+            });
+
+            // Now build scoresheet using rank values
+            scoresheet = contestants.map((contestant) => {
+                const displayedScores: number[] = criteria.map((criterion) => {
+                    return criterionRanks[criterion.id]?.[contestant.name] ?? 0;
+                });
+
+                const total_score = displayedScores.reduce((sum, rank) => sum + rank, 0);
+
+                return {
+                    contestant: contestant.name,
+                    scores: contestant.scores,
+                    total_score,
+                    displayedScores,
+                    rank: 0, // placeholder
+                };
+            });
+
+            // Sort ascending (lower total = better rank)
+            scoresheet.sort((a, b) => a.total_score - b.total_score);
+        }
+
+        // Handle final ranking with tie support
+        let lastScore: number | null = null;
+        let lastRank = 0;
+        let skip = 0;
+
+        for (let i = 0; i < scoresheet.length; i++) {
+            const entry = scoresheet[i];
+            if (entry.total_score === lastScore) {
+                skip++;
+                entry.rank = lastRank;
+            } else {
+                const currentRank = lastRank + skip + 1;
+                entry.rank = currentRank;
+                lastRank = currentRank;
+                skip = 0;
+                lastScore = entry.total_score;
+            }
+        }
 
         return scoresheet;
     };
+
+    const scores = totaledScores();
 
     return (
         <div>
@@ -33,22 +126,22 @@ const JudgeScoresheet2 = ({ judge, contestants, criteria }: Props) => {
                             <th>Contestant</th>
                             {criteria.map((c) => (
                                 <th key={c.id} className="capitalize">
-                                    {c.name}
+                                    {c.name} {pointBased ? '' : '(Rank)'}
                                 </th>
                             ))}
-                            <th>Total Score</th>
-                            <th>Rank</th>
+                            <th>{pointBased ? 'Total Score' : 'Sum of Ranks'}</th>
+                            <th>Final Rank</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {totaledScores().map((entry, index) => (
+                        {scores.map((entry, index) => (
                             <tr key={index}>
                                 <th>{entry.contestant}</th>
-                                {entry.scores?.map((score) => (
-                                    <th key={score.id}>{score.score}</th>
+                                {entry.displayedScores.map((val, i) => (
+                                    <td key={i}>{val}</td>
                                 ))}
-                                <th>{entry.total_score}</th>
-                                <th>{index + 1}</th>
+                                <td>{entry.total_score}</td>
+                                <td>{entry.rank}</td>
                             </tr>
                         ))}
                     </tbody>
