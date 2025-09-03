@@ -13,23 +13,28 @@ type RankedEntry = {
     scores?: Score[];
     total_score: number;
     rank: number;
-    displayedScores: (number | string)[]; // raw scores (point-based) or ranks (rank-based)
+    displayedScores: number[]; // raw scores (point-based) or ranks (rank-based)
 };
 
 const JudgeScoresheet2 = ({ judge, contestants, criteria, pointBased }: Props) => {
+    // Filter scores to only those from current judge
+    const filteredContestants = contestants.map((contestant) => ({
+        ...contestant,
+        scores: contestant.scores?.filter((score) => score.judge_id === judge.id) ?? [],
+    }));
+
     const totaledScores = (): RankedEntry[] => {
         let scoresheet: RankedEntry[] = [];
 
         if (pointBased) {
             // POINT-BASED: sum raw scores per contestant
-            scoresheet = contestants.map((contestant) => {
-                const scores = contestant.scores || [];
+            scoresheet = filteredContestants.map((contestant) => {
                 const displayedScores = criteria.map((criterion) => {
-                    const score = scores.find((s) => s.criterion_id === criterion.id)?.score ?? 0;
+                    const score = contestant.scores?.find((s) => s.criterion_id === criterion.id)?.score ?? 0;
                     return score;
                 });
 
-                const total_score = displayedScores.reduce((sum, score) => sum + (typeof score === 'number' ? score : 0), 0);
+                const total_score = displayedScores.reduce((sum, score) => sum + score, 0);
 
                 return {
                     contestant: contestant.name,
@@ -47,7 +52,7 @@ const JudgeScoresheet2 = ({ judge, contestants, criteria, pointBased }: Props) =
             const criterionRanks: Record<number, Record<string, number>> = {}; // criterion_id -> { contestantName: rank }
 
             criteria.forEach((criterion) => {
-                const scoresForCriterion = contestants.map((contestant) => {
+                const scoresForCriterion = filteredContestants.map((contestant) => {
                     const score = contestant.scores?.find((s) => s.criterion_id === criterion.id)?.score ?? 0;
                     return {
                         name: contestant.name,
@@ -59,7 +64,6 @@ const JudgeScoresheet2 = ({ judge, contestants, criteria, pointBased }: Props) =
                 scoresForCriterion.sort((a, b) => b.score - a.score);
 
                 const ranks: Record<string, number> = {};
-                let rank = 1;
                 for (let i = 0; i < scoresForCriterion.length; i++) {
                     if (i > 0 && scoresForCriterion[i].score === scoresForCriterion[i - 1].score) {
                         ranks[scoresForCriterion[i].name] = ranks[scoresForCriterion[i - 1].name];
@@ -72,7 +76,7 @@ const JudgeScoresheet2 = ({ judge, contestants, criteria, pointBased }: Props) =
             });
 
             // Now build scoresheet using rank values
-            scoresheet = contestants.map((contestant) => {
+            scoresheet = filteredContestants.map((contestant) => {
                 const displayedScores: number[] = criteria.map((criterion) => {
                     return criterionRanks[criterion.id]?.[contestant.name] ?? 0;
                 });
@@ -92,7 +96,7 @@ const JudgeScoresheet2 = ({ judge, contestants, criteria, pointBased }: Props) =
             scoresheet.sort((a, b) => a.total_score - b.total_score);
         }
 
-        // Handle final ranking with tie support
+        // Assign final ranks with tie handling
         let lastScore: number | null = null;
         let lastRank = 0;
         let skip = 0;
@@ -136,7 +140,7 @@ const JudgeScoresheet2 = ({ judge, contestants, criteria, pointBased }: Props) =
                     <tbody>
                         {scores.map((entry, index) => (
                             <tr key={index}>
-                                <th>{entry.contestant}</th>
+                                <td>{entry.contestant}</td>
                                 {entry.displayedScores.map((val, i) => (
                                     <td key={i}>{val}</td>
                                 ))}

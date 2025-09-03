@@ -8,7 +8,6 @@ import axios from 'axios';
 import { Plus } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useReactToPrint } from 'react-to-print';
-import CategoricalWinnersComponents from './_components/CategoricalWinnersComponents';
 import ContestantsComponent from './_components/ContestantsComponent';
 import JudgesComponent from './_components/JudgesComponent';
 import SpecialAwardComponent from './_components/SpecialAwardComponent';
@@ -17,6 +16,7 @@ import TotalScoreSheetComponent from './_components/TotalScoreSheetComponent';
 import Logo125 from '../../../public/assets/125th_LOGO.webp';
 import CSCBPLogo from '../../../public/assets/CSCBPLOGOS.webp';
 import PCSATheme from '../../../public/assets/PCSATHEME.webp';
+import CriterionWinnersTable from './_components/CriterionWinnersTable';
 import JudgeScoresheet2 from './_components/JudgeScoresheet2';
 
 interface Props {
@@ -154,7 +154,8 @@ const Admin = ({ event: eventFromProps, judges_to_choose_from }: Props) => {
                 <div className="block gap-4 overflow-y-auto bg-white p-8" ref={contentToPrint}>
                     <div className="print-avoid-break space-y-4">
                         <TotalScoreSheetComponent event={event} pointBased={pointBased} />
-                        <CategoricalWinnersComponents event={event} pointBased={pointBased} />
+                        {/* <CategoricalWinnersComponents event={event} pointBased={pointBased} /> */}
+                        <CriterionWinnersTable pointBased={pointBased} contestants={event.contestants ?? []} criteria={event.criteria ?? []} />
                         {specialAwards.length > 0 && (
                             <div className="print-avoid-break">
                                 <SpecialAwardComponent awards={specialAwards} isPrinting={isPrinting} />
