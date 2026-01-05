@@ -5,7 +5,7 @@
 @plugin "daisyui/theme" {
     name: 'autumn';
     default: true;
-    prefersdark: false;
+    prefersdark: true;
     color-scheme: 'light';
     --color-base-100: oklch(98% 0.003 247.858);
     --color-base-200: oklch(92% 0.013 255.508);
