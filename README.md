@@ -1,81 +1,121 @@
-## Step-by-Step Guide to Duplicate This Project
+# Step-by-step Guide to Duplicate and Run the Project
 
-
-Follow these steps to duplicate the project from [https://github.com/kimpoy31/hr_tabulator_v2.git](https://github.com/kimpoy31/hr_tabulator_v2.git):
-
-### 1. Prerequisites
-
-- Ensure you have [Git](https://git-scm.com/downloads) installed.
-- Make sure you have the relevant runtime and package manager (Node.js, Python, PHP, etc.) as required by the project.
-- Install [Reverb](https://docs.reverbcms.com/docs/getting-started/installation) globally by following the [official instructions](https://docs.reverbcms.com/docs/getting-started/installation), if not already installed.
-
-### 2. Clone the Repository
-
-Open your terminal or command prompt and run:
-
-```
-git clone https://github.com/kimpoy31/hr_tabulator_v2.git
-```
-
-### 3. Navigate to the Project Directory
-
-```
-cd hr_tabulator_v2
-```
-
-### 4. Install Dependencies
-
-Check which dependencies you need to install:
-
-- **Node.js:**
-    ```
-    npm install
-    ```
-- **Python:**
-    ```
-    pip install -r requirements.txt
-    ```
-- **Composer (PHP):**
-    ```
-    composer install
-    ```
-
-Choose the appropriate command for your project.
-
-### 5. Configure Environment Variables
-
-If there's a `.env.example` file, copy it to `.env`:
-
-```
-cp .env.example .env
-```
-
-Edit `.env` to set up the proper configuration for your environment.
-
-### 6. Initialize the Database (If Required)
-
-If the project uses a database, setup it according to the documentation. For example, in a Laravel PHP project:
-
-```
-php artisan migrate --seed
-```
-
-### 7. Start the Application Using Reverb
-
-If this project uses [Reverb](https://docs.reverbcms.com/), start the project with:
-
-```
-php artisan reverb:start
-```
-
-This will launch the application using Reverb.
-
-If Reverb is not used in your setup, you can start the project as generally described by the project documentation (for example, `npm start`, `php artisan serve`, or `python app.py`).
-
-### 8. Access the Application
-
-Follow the terminal output to access the application, typically via a browser at a URL like `http://localhost:8000` or `http://localhost:3000`.
+This guide will walk you through the process of duplicating the project, setting it up, and running all the necessary services (including the development server and Laravel Reverb).
 
 ---
 
-You have now successfully duplicated and started the project!
+## 1. Clone the Repository
+
+```bash
+git clone https://github.com/kimpoy31/hr_tabulator_v2.git
+cd hr_tabulator_v2
+```
+
+---
+
+## 2. Install Dependencies
+
+### Backend (Laravel)
+
+```bash
+composer install
+```
+
+### Frontend (npm/yarn, depending on the project)
+
+```bash
+npm install
+# OR
+yarn install
+```
+
+---
+
+## 3. Setup Environment Variables
+
+Copy the example `.env` file and update it with your configuration:
+
+```bash
+cp .env.example .env
+```
+
+Then edit `.env` as needed (database, keys, etc).
+
+---
+
+## 4. Generate Application Key
+
+```bash
+php artisan key:generate
+```
+
+---
+
+## 5. Run Database Migrations and Seed
+
+Run the migrations to create database tables **and** seed the database with initial data:
+
+```bash
+php artisan migrate --seed
+```
+
+If you want to run migrations and seeding separately, you can do:
+
+```bash
+php artisan migrate
+php artisan db:seed
+```
+
+---
+
+## 6. Start the Development Servers
+
+### a. Serve the Laravel Backend
+
+```bash
+php artisan serve
+```
+
+This will usually run on [http://localhost:8000](http://localhost:8000).
+
+### b. Start the Frontend (Vite/React/Vue/etc.)
+
+Check `package.json` for the script, usually:
+
+```bash
+npm run dev
+# OR
+yarn dev
+```
+
+This will usually run on [http://localhost:3000](http://localhost:3000) or [http://localhost:5173](http://localhost:5173).
+
+### c. Start Laravel Reverb (for websockets)
+
+```bash
+php artisan reverb:start
+```
+
+This will run the Laravel Reverb websocket server needed for real-time features.
+
+---
+
+## 7. Access the Project
+
+- Laravel backend: `http://localhost:8000`
+- Frontend: refer to the output URL after running `npm run dev` or `yarn dev`.
+- Websocket/Reverb usually runs on `ws://localhost:6001` (check `.env` for details).
+
+---
+
+**Tip:** You may want to use [Laravel Sail](https://laravel.com/docs/sail) or Docker for a fully containerized setup if you prefer.
+
+**If you encounter any errors:**
+
+- Double check your `.env` database credentials.
+- Verify that all dependencies are installed without errors.
+- Ensure the correct PHP and Node.js versions are installed.
+
+---
+
+Happy coding!
