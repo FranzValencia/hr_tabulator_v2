@@ -3,15 +3,19 @@ import AuthenticatedLayout from '@/layouts/AuthenticatedLayout';
 import { PageProps } from '@/types';
 import { Event, EventUser, Score } from '@/types/types';
 import { router, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import { useRef, useState, type KeyboardEvent } from 'react';
 
 interface Props {
     eventUsers: EventUser[];
 }
 
+const DECIMAL_WARNING = 'Decimals are not allowed. Enter whole numbers only.';
+const DECIMAL_KEYS = new Set(['.', ',', 'e', 'E', '+']);
+
 const judge = ({ eventUsers }: Props) => {
     const { showToast } = useToast();
     const { user } = usePage<PageProps>().props.auth;
+    const lastDecimalWarningAt = useRef(0);
 
     const [activeEvent, setActiveEvent] = useState<Event | undefined>(eventUsers[0].event);
     const [activeScores, setActiveScores] = useState(eventUsers[0].event?.scores);
@@ -19,6 +23,13 @@ const judge = ({ eventUsers }: Props) => {
     const [activeContestants, setActiveContestants] = useState(eventUsers[0].event?.contestants);
 
     const [prevScores, setPrevScores] = useState(eventUsers[0].event?.scores);
+
+    const warnDecimalsNotAllowed = () => {
+        const now = Date.now();
+        if (now - lastDecimalWarningAt.current < 1500) return;
+        lastDecimalWarningAt.current = now;
+        showToast(DECIMAL_WARNING, 'warning');
+    };
 
     const handleEventSwitching = async (eventToSwitch: EventUser) => {
         setActiveScores(eventToSwitch.event?.scores);
@@ -42,12 +53,35 @@ const judge = ({ eventUsers }: Props) => {
                 if (score.id === scoreId) {
                     return {
                         ...score,
-                        score: newScore === null ? null : Math.min(newScore, maxScore),
+                        score: newScore === null ? null : Math.min(Math.trunc(newScore), maxScore),
                     };
                 }
                 return score;
             });
         });
+    };
+
+    const handleScoreInputChange = (scoreId: number, rawValue: string, maxScore: number) => {
+        if (rawValue === '') {
+            handleScoreChange(scoreId, null, maxScore);
+            return;
+        }
+
+        if (/[.,eE+]/.test(rawValue)) {
+            warnDecimalsNotAllowed();
+        }
+
+        const parsed = parseInt(rawValue, 10);
+        if (Number.isNaN(parsed)) return;
+
+        handleScoreChange(scoreId, parsed, maxScore);
+    };
+
+    const handleScoreKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+        if (DECIMAL_KEYS.has(e.key)) {
+            e.preventDefault();
+            warnDecimalsNotAllowed();
+        }
     };
 
     const handleUpdateScores = async () => {
@@ -123,12 +157,13 @@ const judge = ({ eventUsers }: Props) => {
                                             <th key={index} className={`text-center`}>
                                                 <input
                                                     type="number"
+                                                    step={1}
+                                                    min={0}
+                                                    max={criterion.weight}
                                                     className="input max-w-32 text-center"
                                                     value={score > 0 ? score : ''}
-                                                    onChange={(e) => {
-                                                        const val = e.target.value;
-                                                        handleScoreChange(scoreId!, val === '' ? null : parseFloat(val), criterion.weight);
-                                                    }}
+                                                    onKeyDown={handleScoreKeyDown}
+                                                    onChange={(e) => handleScoreInputChange(scoreId!, e.target.value, criterion.weight)}
                                                 />
                                             </th>
                                         );

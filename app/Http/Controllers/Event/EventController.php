@@ -37,14 +37,18 @@ class EventController extends Controller
 
 
     public function update_scores(Request $request)
-    {        
-        $scores = $request->input('scores', []);
+    {
+        $validated = $request->validate([
+            'scores' => 'required|array',
+            'scores.*.id' => 'required|integer|exists:scores,id',
+            'scores.*.score' => 'nullable|integer|min:0',
+        ]);
 
-        foreach ($scores as $score) {
-            $score = (array) $score; // convert object to array
+        foreach ($validated['scores'] as $score) {
+            $score = (array) $score;
 
-            if (!isset($score['id'], $score['score'])) {
-                continue; // skip invalid data
+            if (!array_key_exists('score', $score)) {
+                continue;
             }
 
             $scoreToUpdate = Score::find($score['id']);
