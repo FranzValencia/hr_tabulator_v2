@@ -41,6 +41,8 @@ class JudgeController extends Controller
                 ]);
             }
         }
+
+        return back()->with('success', 'Judge added successfully.');
     }
 
     public function remove_judge (Request $request) {
@@ -58,6 +60,8 @@ class JudgeController extends Controller
             if ($event) {
                 $event->delete();
             }
+
+            return back()->with('success', 'Judge removed successfully.');
         } catch (ValidationException $e) {
             return back()->withErrors($e->validator)->withInput();
         } catch (Exception $e) {
@@ -83,6 +87,33 @@ class JudgeController extends Controller
             ]);
 
             return back()->with('success', 'Judge created successfully.');
+        } catch (ValidationException $e) {
+            return back()->withErrors($e->validator)->withInput();
+        } catch (Exception $e) {
+            return back()->with('error', 'An unexpected error occurred. Please try again.');
+        }
+    }
+
+    public function update_judge(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'user_id' => 'required|integer|exists:users,id',
+                'fullname' => 'required|string',
+                'username' => 'required|string|unique:users,username,' . $request->input('user_id'),
+                'password' => 'required|string',
+            ]);
+
+            $user = User::findOrFail($validated['user_id']);
+
+            $user->update([
+                'name' => $validated['fullname'],
+                'username' => $validated['username'],
+                'password' => $validated['password'],
+                'plain_password' => $validated['password'],
+            ]);
+
+            return back()->with('success', 'Judge updated successfully.');
         } catch (ValidationException $e) {
             return back()->withErrors($e->validator)->withInput();
         } catch (Exception $e) {

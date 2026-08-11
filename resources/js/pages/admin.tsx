@@ -48,16 +48,17 @@ const Admin = ({ event: eventFromProps, judges_to_choose_from }: Props) => {
             setEvent(res.data);
             setSpecialAwards(res.data.special_awards);
         });
-        // await router.get(route('get.updated.event', event.id));
     };
 
-    useEcho(`scores-updated.${user.id}`, 'ScoresUpdated', (e: any) => {
+    // Keep local event in sync when Inertia props refresh after mutations
+    useEffect(() => {
+        setEvent(eventFromProps);
+        setSpecialAwards(eventFromProps.special_awards ?? []);
+    }, [eventFromProps]);
+
+    useEcho(`scores-updated.${user.id}`, 'ScoresUpdated', () => {
         fetchUpdatedEvent();
     });
-
-    useEffect(() => {
-        console.log('event from props: ', eventFromProps);
-    }, [eventFromProps]);
 
     useEffect(() => {
         if (isPrinting && promiseResolveRef.current) {

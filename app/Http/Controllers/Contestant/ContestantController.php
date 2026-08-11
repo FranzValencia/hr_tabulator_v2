@@ -36,6 +36,8 @@ class ContestantController extends Controller
                 ]);
             }
         }
+
+        return back()->with('success', 'Contestant created successfully.');
     }
 
     public function remove_contestant (Request $request) {
@@ -45,5 +47,21 @@ class ContestantController extends Controller
 
         $contestant = Contestant::find($validated['contestant_id']);
         $contestant->delete();
+
+        return back()->with('success', 'Contestant removed successfully.');
+    }
+
+    public function update_contestant (Request $request) {
+        $validated = $request->validate([
+            'contestant_id' => 'required|integer|exists:contestants,id',
+            'name' => 'required|string',
+        ]);
+
+        $contestant = Contestant::findOrFail($validated['contestant_id']);
+        $contestant->update([
+            'name' => $validated['name'],
+        ]);
+
+        return back()->with('success', 'Contestant updated successfully.');
     }
 }

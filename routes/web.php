@@ -94,10 +94,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/add-judge', [JudgeController::class, 'add_judge'])->name('event.add.judge');
     Route::delete('/remove-judge', [JudgeController::class, 'remove_judge'])->name('event.remove.judge');
     Route::post('/create-judge', [JudgeController::class, 'create_judge'])->name('event.create.judge');
+    Route::patch('/update-judge', [JudgeController::class, 'update_judge'])->name('event.update.judge');
 
     // PARTICIPANT CONTROLLER ROUTES
     Route::post('/create-contestant', [ContestantController::class, 'create_contestant'])->name('create.contestant');
     Route::delete('/remove-contestant', [ContestantController::class, 'remove_contestant'])->name('remove.contestant');
+    Route::patch('/update-contestant', [ContestantController::class, 'update_contestant'])->name('update.contestant');
 
     // AWARD CONTROLLER
     Route::post('/create-award', [EventController::class, 'create_award'])->name('create.award');
