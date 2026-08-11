@@ -3,12 +3,13 @@ import AuthenticatedLayout from '@/layouts/AuthenticatedLayout';
 import { Criterion, Event } from '@/types/types';
 import { Link, router } from '@inertiajs/react';
 import { X } from 'lucide-react';
-import { useState } from 'react';
+import { type KeyboardEvent, useRef, useState } from 'react';
 
 const welcome = ({ events }: { events: Event[] }) => {
     const [eventName, setEventName] = useState('');
     const [criteria, setCriteria] = useState<Criterion[]>([]);
     const [criterion, setCriterion] = useState<Criterion>({ name: '', weight: 0, id: 0 });
+    const criterionNameRef = useRef<HTMLInputElement>(null);
 
     const { showToast } = useToast();
 
@@ -16,7 +17,7 @@ const welcome = ({ events }: { events: Event[] }) => {
     const isDisabled = totalWeight !== 100;
 
     const onAddCriterion = () => {
-        if (!criterion.name.trim()) return;
+        if (!criterion.name.trim() || criterion.weight === 0) return;
 
         setCriteria((prevData) => [
             ...prevData,
@@ -27,6 +28,14 @@ const welcome = ({ events }: { events: Event[] }) => {
         ]);
 
         setCriterion({ name: '', weight: 0, id: 0 });
+        criterionNameRef.current?.focus();
+    };
+
+    const handleCriterionKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            onAddCriterion();
+        }
     };
 
     const onRemoveCriterion = (id: number) => {
@@ -62,10 +71,12 @@ const welcome = ({ events }: { events: Event[] }) => {
                         <fieldset className="fieldset w-full">
                             <legend className="fieldset-legend">Criterion</legend>
                             <input
+                                ref={criterionNameRef}
                                 type="text"
                                 className="input w-full"
                                 value={criterion.name}
                                 onChange={(e) => setCriterion({ ...criterion, name: e.target.value })}
+                                onKeyDown={handleCriterionKeyDown}
                             />
                         </fieldset>
                         <fieldset className="fieldset">
@@ -86,6 +97,7 @@ const welcome = ({ events }: { events: Event[] }) => {
                                                       : Number(e.target.value),
                                         })
                                     }
+                                    onKeyDown={handleCriterionKeyDown}
                                 />
 
                                 <button
