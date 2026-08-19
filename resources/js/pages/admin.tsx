@@ -12,7 +12,7 @@ import ContestantsComponent from './_components/ContestantsComponent';
 import JudgesComponent from './_components/JudgesComponent';
 import SpecialAwardComponent from './_components/SpecialAwardComponent';
 // LOGOS
-import Logo125 from '../../../public/assets/125th_LOGO.webp';
+import Logo from '../../../public/assets/LOGO.png';
 import CSCBPLogo from '../../../public/assets/CSCBPLOGOS.webp';
 import PCSATheme from '../../../public/assets/PCSATHEME.webp';
 import CriterionWinnersTable from './_components/CriterionWinnersTable';
@@ -184,7 +184,7 @@ const Admin = ({ event: eventFromProps, judges_to_choose_from }: Props) => {
 
                                     {isPrinting && (
                                         <footer className="footer flex items-center justify-between bg-base-200/50 p-2 text-base-content sm:footer-horizontal">
-                                            <img src={Logo125} alt="logos" className="max-h-40" />
+                                            <img src={Logo} alt="logos" className="max-h-40" />
                                             <img src={CSCBPLogo} alt="logos" className="max-h-32" />
                                             <img src={PCSATheme} alt="logos" className="max-h-16" />
                                         </footer>
